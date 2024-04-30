@@ -1,42 +1,39 @@
-body {
-  background-color: rgb(180, 180, 180);
-  height: 100%;
-  height: 100%;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  justify-content: center;
-}
 #root {
   height: 100%;
   width: 100%;
   font-family: Arial, sans-serif;
+  /*primary theme colors*/
+  --color-primary-1: #088be2;
+  --color-primary-2: #4697e6;
+  --color-primary-3: #66a3e9;
+  --color-primary-4: #80b0ec;
+  --color-primary-5: #97bdf0;
+  --color-primary-6: #adcaf3;
+  /*surface theme colors*/
+  /*1 for body background, 2 for cards background, 3 for chips buttons and dropdowns*/
+  /*4 for sidebars and navbar background, 5 for modal and diaglogs background, 6 for background texts color*/
+  --color-surface-1: #131313;
+  --color-surface-2: #282828;
+  --color-surface-3: #3f3f3f;
+  --color-surface-4: #585858;
+  --color-surface-5: #717171;
+  --color-surface-6: #8c8c8c;
 }
-.whole-page {
-  background-color: rgba(30, 0, 163, 0);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; 
+body {
+  background-color: #131313;
+  margin: 0;
+  color: #EEEEEE;
 }
-.code-tool {
-  background-color: rgb(41, 41, 41);
-  display: flex;
-  flex-direction: column;
-  height: 50%;
-  width: 65%;
-  padding: 1rem;
-  gap: 0.5rem;
-}
-.submit-btn {
-  background-color: #088be2;
-  font-weight: bolder;
-  font-size: medium;
-  color: white;
-  border: none;
-  cursor: pointer;
+input {
   width: 100%;
-  height: 50px;
+  padding: 0.5rem;
+  box-sizing: border-box;
 }
-.submit-btn:hover {
-  background-color: #0a6ebd;
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: fit-content;
 }
