@@ -58,7 +58,7 @@
     display: flex;
     flex-direction: column;
     border-radius: 0.5rem;
-    width: 50%;
+    width: 40%;
     padding: 1rem;
     margin: 1rem;
     gap: 0.5rem;
@@ -70,7 +70,7 @@
     flex-direction: column;
     justify-content: space-between;
     border-radius: 0.5rem;
-    width: 50%;
+    width: 35%;
     padding: 1rem;
     margin: 1rem;
     gap: 0.5rem;
@@ -98,6 +98,17 @@
 }
 .tutor-chat {
     align-self: flex-start;
+}
+/*Output*/
+.output {
+    background-color: var(--color-surface-2);
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.5rem;
+    width: 25%;
+    padding: 1rem;
+    margin: 1rem;
+    gap: 0.5rem;
 }
 
 
