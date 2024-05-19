@@ -11,7 +11,7 @@ const Navbar = () => {
             <ul>
                 <li className='site-title'>
                     <img src={logo_primary}></img>
-                    <Link to="/">PYMON</Link>
+                    <Link to="/">PyMon</Link>
                     
                 </li>
             </ul>
