@@ -1,7 +1,8 @@
 #root {
   height: 100%;
   width: 100%;
-  font-family: Arial, sans-serif;
+  /*font-family: Arial, sans-serif;*/
+  font-family: 'Monaco', monospace;
   /*primary theme colors*/
   --color-primary-1: #088be2;
   --color-primary-2: #4697e6;

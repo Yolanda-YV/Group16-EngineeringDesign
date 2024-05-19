@@ -33,8 +33,12 @@
     margin: 0;
     gap: 1rem;
 }
+.navbar img {
+    height: 3rem;
+    width: auto;
+}
 .nav-item {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     cursor: pointer;
     color: inherit;
     text-decoration: none;
@@ -43,14 +47,22 @@
     color: var(--color-primary-1);
 }
 .site-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     background-color: var(--color-surface-2);
-    color: var(--color-primary-1);
+    /*color: var(--color-primary-1);*/
+    color: #EEEEEE;
+    gap: 0.25rem;
     padding: 0.75rem;
     border-radius: 0.5rem;
-    font-size: 1.5rem;
-    font-weight: bolder;
+    font-size: 2.5rem;
     cursor: pointer;
     text-decoration: none;
+}
+.site-title a {
+    color: inherit;
+    text-decoration: inherit;
 }
 /*Code Tool*/
 .code-tool {
@@ -120,6 +132,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: stretch; 
-    height: calc(100vh - 80px);
+    height: calc(100vh - 100px);
 }
 
