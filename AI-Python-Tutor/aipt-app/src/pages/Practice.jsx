@@ -5,6 +5,7 @@ import '../index.css';
 import CodeTool from '../components/CodeTool';
 import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
+import { TutorAgent } from '../modules/TutorAgent.js';
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
@@ -13,6 +14,7 @@ const Practice = () => {
     const [output, setOutput] = useState(`Output will be displayed here`)
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
+    const tutorAgent = new TutorAgent();
 
     const handleCodeSubmit = async (e) => {
         e.preventDefault()
@@ -22,7 +24,9 @@ const Practice = () => {
     const handlePromptSubmit = async (e) => {
         e.preventDefault()
         const prompt = promptValueRef.current
-        window.alert(prompt, typeof(prompt))
+        const response = await tutorAgent.requestResponse(prompt)
+        // For testing purposes
+        window.alert('User: '+prompt+'\nResponse: '+response.message.content)
     }
     const handleEditorChange = (value, event) => {
         codeValueRef.current = value
