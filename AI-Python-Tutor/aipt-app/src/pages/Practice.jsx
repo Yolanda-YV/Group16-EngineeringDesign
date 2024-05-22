@@ -12,6 +12,8 @@ const Practice = () => {
     // - doesn't reset on every render 
     // - doesn't trigger a re-render on change)
     const [output, setOutput] = useState(`Output will be displayed here`)
+    const [chatHistory, setChatHistory] = useState([])
+    const [task, setTask] = useState("Print the sum of two numbers")
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent();
@@ -24,9 +26,15 @@ const Practice = () => {
     const handlePromptSubmit = async (e) => {
         e.preventDefault()
         const prompt = promptValueRef.current
+        // Add user prompt to chat history
+        setChatHistory(prevChatHistory => [
+            ...prevChatHistory, 
+            {content: prompt, type: 'user'}])
         const response = await tutorAgent.requestResponse(prompt)
-        // For testing purposes
-        window.alert('User: '+prompt+'\nResponse: '+response.message.content)
+        // Add user prompt to chat history
+        setChatHistory(prevChatHistory => [
+            ...prevChatHistory, 
+            {content: response.message.content, type: 'tutor'}])
     }
     const handleEditorChange = (value, event) => {
         codeValueRef.current = value
@@ -41,11 +49,12 @@ const Practice = () => {
         <div className='practice-page'>
             <ChatTool
                 handlePromptChange={handlePromptChange}
-                handleSubmit={handlePromptSubmit} />
+                handleSubmit={handlePromptSubmit}
+                chats={chatHistory} />
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit} />
-            <Output output={output} />
+            <Output output={output} task={task} />
         </div>
     );
 }
