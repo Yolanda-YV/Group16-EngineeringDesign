@@ -5,14 +5,18 @@ import '../index.css';
 import CodeTool from '../components/CodeTool';
 import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
+import { TutorAgent } from '../modules/TutorAgent.js';
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
     // - doesn't reset on every render 
     // - doesn't trigger a re-render on change)
     const [output, setOutput] = useState(`Output will be displayed here`)
+    const [chatHistory, setChatHistory] = useState([])
+    const [task, setTask] = useState("Print the sum of two numbers")
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
+    const tutorAgent = new TutorAgent();
 
     const handleCodeSubmit = async (e) => {
         e.preventDefault()
@@ -22,7 +26,15 @@ const Practice = () => {
     const handlePromptSubmit = async (e) => {
         e.preventDefault()
         const prompt = promptValueRef.current
-        window.alert(prompt, typeof(prompt))
+        // Add user prompt to chat history
+        setChatHistory(prevChatHistory => [
+            ...prevChatHistory, 
+            {content: prompt, type: 'user'}])
+        const response = await tutorAgent.requestResponse(prompt)
+        // Add user prompt to chat history
+        setChatHistory(prevChatHistory => [
+            ...prevChatHistory, 
+            {content: response.message.content, type: 'tutor'}])
     }
     const handleEditorChange = (value, event) => {
         codeValueRef.current = value
@@ -37,11 +49,12 @@ const Practice = () => {
         <div className='practice-page'>
             <ChatTool
                 handlePromptChange={handlePromptChange}
-                handleSubmit={handlePromptSubmit} />
+                handleSubmit={handlePromptSubmit}
+                chats={chatHistory} />
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit} />
-            <Output output={output} />
+            <Output output={output} task={task} />
         </div>
     );
 }
