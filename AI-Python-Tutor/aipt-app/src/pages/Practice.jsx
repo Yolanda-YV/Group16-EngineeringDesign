@@ -34,14 +34,13 @@ const Practice = () => {
         // Add user prompt to chat history
         setChatHistory(prevChatHistory => [
             ...prevChatHistory, 
-            {content: response.message.content, type: 'tutor'}])
+            {content: response, type: 'tutor'}])
     }
     const handleEditorChange = (value, event) => {
         codeValueRef.current = value
     }
     const handlePromptChange = (event) => {
         let value = event.target.value
-        console.log(value)
         promptValueRef.current = value
     }
 

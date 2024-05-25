@@ -1,18 +1,14 @@
-import OpenAI from "openai";
-// For further security, best to send request to server-side API to call OpenAI API
-// For development, using the OpenAI API key directly in the browser
-const openai = new OpenAI({apiKey: import.meta.env.VITE_OPENAI_API_KEY, dangerouslyAllowBrowser: true});
-
+// TutorAgent makes an API call to the Response serverless function to request a response from OPENAI
 class TutorAgent {
     constructor() {}
     async requestResponse(prompt) {
-        const completion = await openai.chat.completions.create({
-            messages: [
-                { role: "system", content: "You are a tutor that teaches Python programming." }, 
-                {role: "user", content: `${prompt}`}],
-            model: "gpt-3.5-turbo",
+        const response = await fetch("/.netlify/functions/Response", {
+            method: "POST",
+            headers: { 'Content-Type': 'text/plain' },
+            body: `${prompt}`,
         });
-        return completion.choices[0];
+        const completion = await response.text();
+        return completion;
     }
 }
 
