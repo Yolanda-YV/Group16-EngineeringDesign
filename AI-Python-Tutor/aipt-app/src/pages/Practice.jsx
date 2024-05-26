@@ -16,13 +16,17 @@ const Practice = () => {
     const [task, setTask] = useState("Print the sum of two numbers")
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
-    const tutorAgent = new TutorAgent();
+    const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
 
+    // Handle code submission, will call prompt agent to get response 
+    //  (involves tutor agent, validator agent, and interpreter)
     const handleCodeSubmit = async (e) => {
         e.preventDefault()
         const code = codeValueRef.current
         setOutput(code)
     }
+    // Handles prompt submission, will call prompt agent to get response
+    // Prompt agent will take prompt, filter prompt, and use it to get a response from the tutor agent
     const handlePromptSubmit = async (e) => {
         e.preventDefault()
         const prompt = promptValueRef.current
@@ -30,12 +34,17 @@ const Practice = () => {
         setChatHistory(prevChatHistory => [
             ...prevChatHistory, 
             {content: prompt, type: 'user'}])
+        
+        // NOTE: This is where the request to the Prompt Agent is made
+        //       For testing purposes, using the Tutor Agent directly
         const response = await tutorAgent.requestResponse(prompt)
         // Add user prompt to chat history
         setChatHistory(prevChatHistory => [
             ...prevChatHistory, 
             {content: response, type: 'tutor'}])
     }
+
+    // Handle's changes in user input (code tool and chat tool) and updates the ref
     const handleEditorChange = (value, event) => {
         codeValueRef.current = value
     }
