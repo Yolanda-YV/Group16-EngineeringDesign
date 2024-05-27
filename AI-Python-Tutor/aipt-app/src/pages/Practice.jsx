@@ -5,31 +5,51 @@ import '../index.css';
 import CodeTool from '../components/CodeTool';
 import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
+import { TutorAgent } from '../modules/TutorAgent.js';
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
     // - doesn't reset on every render 
     // - doesn't trigger a re-render on change)
     const [output, setOutput] = useState(`Output will be displayed here`)
+    const [chatHistory, setChatHistory] = useState([])
+    const [task, setTask] = useState("Print the sum of two numbers")
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
+    const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
 
+    // Handle code submission, will call prompt agent to get response 
+    //  (involves tutor agent, validator agent, and interpreter)
     const handleCodeSubmit = async (e) => {
         e.preventDefault()
         const code = codeValueRef.current
         setOutput(code)
     }
+    // Handles prompt submission, will call prompt agent to get response
+    // Prompt agent will take prompt, filter prompt, and use it to get a response from the tutor agent
     const handlePromptSubmit = async (e) => {
         e.preventDefault()
         const prompt = promptValueRef.current
-        window.alert(prompt, typeof(prompt))
+        // Add user prompt to chat history
+        setChatHistory(prevChatHistory => [
+            ...prevChatHistory, 
+            {content: prompt, type: 'user'}])
+        
+        // NOTE: This is where the request to the Prompt Agent is made
+        //       For testing purposes, using the Tutor Agent directly
+        const response = await tutorAgent.requestResponse(prompt)
+        // Add user prompt to chat history
+        setChatHistory(prevChatHistory => [
+            ...prevChatHistory, 
+            {content: response, type: 'tutor'}])
     }
+
+    // Handle's changes in user input (code tool and chat tool) and updates the ref
     const handleEditorChange = (value, event) => {
         codeValueRef.current = value
     }
     const handlePromptChange = (event) => {
         let value = event.target.value
-        console.log(value)
         promptValueRef.current = value
     }
 
@@ -37,11 +57,12 @@ const Practice = () => {
         <div className='practice-page'>
             <ChatTool
                 handlePromptChange={handlePromptChange}
-                handleSubmit={handlePromptSubmit} />
+                handleSubmit={handlePromptSubmit}
+                chats={chatHistory} />
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit} />
-            <Output output={output} />
+            <Output output={output} task={task} />
         </div>
     );
 }
