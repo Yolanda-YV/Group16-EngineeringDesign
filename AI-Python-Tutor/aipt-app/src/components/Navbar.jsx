@@ -4,8 +4,17 @@ import '../index.css';
 import logo_primary from '/src/assets/Logo_primary.png';
 import logo_white from '/src/assets/Logo_gray.png';
 import logo_black from '/src/assets/Logo_black.png';
+import supabase from '../utilities/Supabase';
 
 const Navbar = () => {
+    const onLogout = async () => {
+        // Implement logout logic here
+        console.log('Logging out...')
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error("ERROR", error)
+        }
+    }
     return (
         <nav className="navbar">
             <ul>
@@ -17,6 +26,9 @@ const Navbar = () => {
             </ul>
             
             <ul>
+                <li>
+                    <Link onClick={onLogout} className='nav-item'>Log Out</Link>
+                </li>
                 <li>
                     <Link to="/signin" className='nav-item'>Sign In</Link>
                 </li>
