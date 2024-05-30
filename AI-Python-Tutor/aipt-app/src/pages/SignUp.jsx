@@ -16,20 +16,24 @@ const SignUp = () => {
             password: password,
             options: {
                 data: {
-                    DisplayName: username,
+                    display_name: username,
                 }
             }
         });
         if (error) {
             console.error("ERROR", error)
+        } else {
+            // Navigate to the root page
+            navigate('/');
         }
     }
+    // NOTE: naviate(-1) is equivalent to clicking the back button, since signin page may be the root page
     return (
         <div className="sign-page">
             <CredForm isSignIn={false} onSubmit={onSignUp} />
             <div className='redirect-div'>
                 <p>Already have an account?</p>
-                <a onClick={() => navigate('/signin')}>Sign in</a>
+                <a onClick={() => navigate(-1)}>Sign in</a>
             </div>
         </div>
     );

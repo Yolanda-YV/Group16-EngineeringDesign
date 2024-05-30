@@ -185,3 +185,11 @@
     justify-content: center;
     align-items: center;
 }
+.invalid-cred {
+    background-color: rgba(255, 0, 0, 0.253);
+    border: red solid 0.25rem;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    width: 51.5rem;
+    margin: 1rem;
+}

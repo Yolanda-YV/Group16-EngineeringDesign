@@ -1,9 +1,11 @@
 import react from 'react';
 import CredForm from '../components/CredForm';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import supabase from '../utilities/Supabase';
 
 const SignIn = () => {
+    const [invalidCred, setInvalidCred] = useState(false);
     const navigate = useNavigate();
     const onSignIn = async (e) => {
         e.preventDefault();
@@ -15,11 +17,18 @@ const SignIn = () => {
             password: password
         })
         if (error) {
-            console.error("ERROR", error)
+            if (error.status == 400) {
+                setInvalidCred(true);
+            }
+        } else {
+            setInvalidCred(false);
+            // Navigate to the root page
+            navigate('/');
         }
     }
     return (
         <div className="sign-page">
+            {invalidCred ? <p className='invalid-cred'>Incorrect email or password</p> : null}
             <CredForm isSignIn={true} onSubmit={onSignIn}/>
             <div className='redirect-div'>
                 <p>Don't have an account yet?</p>
