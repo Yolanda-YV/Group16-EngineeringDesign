@@ -1,8 +1,9 @@
 /* || GENERAL STYLING*/
 .submit-btn {
     background-color: var(--color-primary-2);
+    border-radius: 0.25rem;
     font-weight: bolder;
-    font-size: medium;
+    font-size: 1.5rem;
     color: #EEEEEE;
     border: none;
     cursor: pointer;
@@ -12,6 +13,17 @@
 .submit-btn:hover {
     background-color: var(--color-primary-1);
 }
+.redirect-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+.redirect-div a {
+    color: var(--color-primary-1);
+    text-decoration: none;
+}
+
 
 
 /* || COMPONENTS*/
@@ -128,12 +140,27 @@
     border-radius: 0.5rem;
     font-size: 1rem;
 }
+/*CredForm*/
+.cred-form {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface-2);
+    border-radius: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    width: 50rem;
+    padding: 1rem 2rem 2rem 2rem;
+    margin: 2rem;
+}
+.cred-form form {
+    gap: 1rem;
+}
 
 
 /* || PAGES*/
 /*Practice Page*/
 .practice-page {
-    background-color: rgba(25, 24, 31, 0);
+    background-color: var(--color-surface-1);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -142,10 +169,27 @@
 }
 /*Dashboard Page*/
 .dashboard-page {
-    background-color: rgba(25, 24, 31, 0);
+    background-color: var(--color-surface-1);
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: stretch; 
     height: calc(100vh - 100px);
+}
+/*Sign In and Sign Up Page*/
+.sign-page {
+    background-color: var(--color-surface-1);
+    color: #EEEEEE;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.invalid-cred {
+    background-color: rgba(255, 0, 0, 0.253);
+    border: red solid 0.25rem;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    width: 51.5rem;
+    margin: 1rem;
 }

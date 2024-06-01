@@ -38,3 +38,10 @@ form {
   width: 100%;
   height: fit-content;
 }
+form input {
+  height: 3rem;
+  border-radius: 0.25rem;
+}
+a:hover {
+  cursor: pointer;
+}
