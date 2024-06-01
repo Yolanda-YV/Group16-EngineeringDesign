@@ -1,4 +1,4 @@
-
+import supabase from '../utilities/Supabase.js';
 
 // TutorAgent makes an API call to the Response serverless function to request a response from OPENAI
 class TutorAgent {
@@ -17,9 +17,18 @@ class TutorAgent {
         //   The code will be sent as a string to the ValidatorAgent
         //   The ValidatorAgent will return a response and output
     }
-    getTask() {
+    async getTask() {
         // This function will get a task from the database based on user progress/skill
         //  For early testing purposes, this will be random and not based on user progress
+        const { data, error } = await supabase
+            .from('Tasks')
+            .select('content')
+        if (error) {
+            return error;
+        } else {
+            const index = Math.floor(Math.random() * (data.length - 1) + 1);
+            return data[index].content;
+        }
     }
 }
 
