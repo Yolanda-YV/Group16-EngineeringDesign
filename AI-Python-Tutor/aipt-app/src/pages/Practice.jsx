@@ -88,6 +88,17 @@ const Practice = () => {
         }
     }
 
+    // Handles task retrieval, will call tutor agent to get a response
+    // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
+    const getTask = async () => {
+        try {
+            const task = await tutorAgent.getTask();
+            setTask(task);
+        } catch (error) {
+            console.error('Error getting task:', error);
+        }
+    }
+
     // Handle's changes in user input (code tool and chat tool) and updates the ref
     const handleEditorChange = (value, event) => {
         codeValueRef.current = value
