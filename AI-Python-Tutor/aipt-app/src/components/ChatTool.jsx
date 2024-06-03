@@ -1,4 +1,5 @@
 import react from 'react';
+import parse from 'html-react-parser';
 
 const ChatTool = ({handleSubmit, handlePromptChange, chats}) => {
     return (
@@ -6,7 +7,7 @@ const ChatTool = ({handleSubmit, handlePromptChange, chats}) => {
             <div className='chat-space'>
                 {chats ? (
                     chats.map((chat, index) => (
-                        <p key={index} className={`chat-message ${chat.type}-chat`}>{chat.content}</p>
+                        <p key={index} className={`chat-message ${chat.type}-chat`}>{parse(chat.content)}</p>
                     ))
                 ) : null}
             </div>

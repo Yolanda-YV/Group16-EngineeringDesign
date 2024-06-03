@@ -25,6 +25,19 @@ body {
   margin: 0;
   color: #EEEEEE;
 }
+code {
+  background-color: var(--color-surface-2);
+  font-family: courier, monospace;
+  padding: 1px;
+}
+code:has(br) {
+  border: solid 0.1rem var(--color-surface-4);
+  display: inline-block;
+  padding: 0.25rem 0.25rem 0.25rem 1.5rem;
+}
+code:empty {
+  display: none;
+}
 input {
   width: 100%;
   padding: 0.5rem;
