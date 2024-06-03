@@ -12,9 +12,10 @@ const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
     // - doesn't reset on every render 
     // - doesn't trigger a re-render on change)
-    const [output, setOutput] = useState(`Output will be displayed here:`)
+    const [output, setOutput] = useState(`Output will be displayed here:`) // Interpreter feedback
     const [chatHistory, setChatHistory] = useState([])
     const [task, setTask] = useState("No task yet!")
+    const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
@@ -35,7 +36,10 @@ const Practice = () => {
             console.log('formattedCode:', formattedCode);
     
             // Send the formatted code to the tutor agent for further processing
-            // const response = await tutorAgent.requestResponse(formattedCode);
+            // NOTE: This is where the request to the Tutor Agent is made
+            //       Tutor Agent will call the Validator Agent to validate and interpret the code (using the interpreter)
+            //        Validator Agent will return the validator's feedback and the interpreter's feedback
+            // const response = await tutorAgent.submitCode(formattedCode);
     
             // Update the output with the response from the tutor agent
             setOutput(formattedCode);
