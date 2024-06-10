@@ -21,10 +21,15 @@ const Practice = () => {
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
     const handleCodeSubmit = async (e) => {
-        e.preventDefault()
-        const code = codeValueRef.current
-        setOutput(code)
-    }
+        e.preventDefault();
+        const code = codeValueRef.current;
+        try {
+            const result = await tutorAgent.executeCode(code); // Assuming there's a method to execute code
+            setOutput(result);
+        } catch (error) {
+            setOutput(`Error: ${error.message}`);
+        }
+    };
     // Handles prompt submission, will call prompt agent to get response
     // Prompt agent will take prompt, filter prompt, and use it to get a response from the tutor agent
     const handlePromptSubmit = async (e) => {

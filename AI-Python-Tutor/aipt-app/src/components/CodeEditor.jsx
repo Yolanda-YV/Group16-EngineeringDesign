@@ -4,7 +4,7 @@ import 'codemirror/mode/python/python';
 import 'codemirror/theme/base16-dark.css';
 import { loadPyodide } from 'pyodide';
 
-const PythonEditor = () => {
+const CodeEditor = () => {
     const [pyodide, setPyodide] = useState(null);
     const [output, setOutput] = useState('');
     const codeMirrorRef = useRef(null);
@@ -78,7 +78,7 @@ const PythonEditor = () => {
     );
 };
 
-export default PythonEditor;
+export default CodeEditor;
 
 const startcode = `
 import sys, io, traceback
