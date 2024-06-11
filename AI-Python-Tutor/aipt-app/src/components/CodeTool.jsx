@@ -2,79 +2,51 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import '../index.css';
-import { loadPyodide } from '../modules/Interpreter';
+// OLD CODE
+// import { loadPyodide } from '../modules/Interpreter';
 
-const CodeTool = () => {
-    const [editorContent, setEditorContent] = useState('');
-    const [output, setOutput] = useState('');
-    const pyodideRef = useRef(null);
-    const codeValueRef = useRef('');
-    const promptValueRef = useRef('');
+// const CodeTool = () => {
+//     const [editorContent, setEditorContent] = useState('');
+//     const [output, setOutput] = useState('');
+//     const pyodideRef = useRef(null);
+//     const codeValueRef = useRef('');
+//     const promptValueRef = useRef('');
 
-    useEffect(() => {
-        const initPyodide = async () => {
-            try {
-                pyodideRef.current = await loadPyodide();
-            } catch (error) {
-                console.error("Failed to load Pyodide", error);
-            }
-        };
-        initPyodide();
-    }, []);
+//     useEffect(() => {
+//         const initPyodide = async () => {
+//             try {
+//                 pyodideRef.current = await loadPyodide();
+//             } catch (error) {
+//                 console.error("Failed to load Pyodide", error);
+//             }
+//         };
+//         initPyodide();
+//     }, []);
 
-    const handleEditorChange = (value, event) => {
-        codeValueRef.current = value;
-        setEditorContent(value); // Update state to trigger re-render
-    };
+//     const handleEditorChange = (value, event) => {
+//         codeValueRef.current = value;
+//         setEditorContent(value); // Update state to trigger re-render
+//     };
 
-    const handlePromptChange = (event) => {
-        let value = event.target.value;
-        promptValueRef.current = value;
-    };
+//     const handlePromptChange = (event) => {
+//         let value = event.target.value;
+//         promptValueRef.current = value;
+//     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (pyodideRef.current) {
-            try {
-                let result = await pyodideRef.current.runPythonAsync(codeValueRef.current);
-                setOutput(result);
-            } catch (error) {
-                setOutput(`Error: ${error.message}`);
-            }
-        } else {
-            setOutput('Pyodide is not loaded yet.');
-        }
-    };
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         if (pyodideRef.current) {
+//             try {
+//                 let result = await pyodideRef.current.runPythonAsync(codeValueRef.current);
+//                 setOutput(result);
+//             } catch (error) {
+//                 setOutput(`Error: ${error.message}`);
+//             }
+//         } else {
+//             setOutput('Pyodide is not loaded yet.');
+//         }
+//     };
 
-    return (
-        <form className='code-tool' onSubmit={handleSubmit}>
-            <Editor 
-                height='calc(100vh - 100px - 50px - 4.5rem)'
-                width='100%'
-                theme='vs-dark'
-                defaultLanguage='python'
-                defaultValue='# Write your code here'
-                value={editorContent}
-                onChange={(value, event) => handleEditorChange(value, event)}></Editor>
-            <input 
-                type="text" 
-                placeholder="Enter prompt"
-                onChange={handlePromptChange}
-            />
-            <button className='submit-btn' type='submit'>Submit</button>
-            <pre className='output'>{output}</pre>
-        </form>
-    );
-};
-
-export default CodeTool;
-
-
-
-
-
-// NOTE: Editor height is 100vh - 90px (Navbar) - 50px (Submit button) - 4.5rem (Gaps and Padding)
-// const CodeTool = ({handleEditorChange, handleSubmit}) => {
 //     return (
 //         <form className='code-tool' onSubmit={handleSubmit}>
 //             <Editor 
@@ -83,13 +55,42 @@ export default CodeTool;
 //                 theme='vs-dark'
 //                 defaultLanguage='python'
 //                 defaultValue='# Write your code here'
-//                 onChange={handleEditorChange}></Editor>
+//                 value={editorContent}
+//                 onChange={(value, event) => handleEditorChange(value, event)}></Editor>
+//             <input 
+//                 type="text" 
+//                 placeholder="Enter prompt"
+//                 onChange={handlePromptChange}
+//             />
 //             <button className='submit-btn' type='submit'>Submit</button>
+//             <pre className='output'>{output}</pre>
 //         </form>
 //     );
-// }
+// };
 
-// export default CodeTool
+// export default CodeTool;
+
+
+
+
+
+// NOTE: Editor height is 100vh - 90px (Navbar) - 50px (Submit button) - 4.5rem (Gaps and Padding)
+const CodeTool = ({handleEditorChange, handleSubmit}) => {
+    return (
+        <form className='code-tool' onSubmit={handleSubmit}>
+            <Editor 
+                height='calc(100vh - 100px - 50px - 4.5rem)'
+                width='100%'
+                theme='vs-dark'
+                defaultLanguage='python'
+                defaultValue='# Write your code here'
+                onChange={handleEditorChange}></Editor>
+            <button className='submit-btn' type='submit'>Submit</button>
+        </form>
+    );
+}
+
+export default CodeTool
 
 // const CodeTool = () => {
 //     const [pyodide, setPyodide] = useState(null);

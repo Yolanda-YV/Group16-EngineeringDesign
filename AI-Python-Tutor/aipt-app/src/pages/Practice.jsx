@@ -6,6 +6,7 @@ import CodeTool from '../components/CodeTool';
 import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
 import { TutorAgent } from '../modules/TutorAgent.js';
+import { Interpreter } from '../modules/Interpreter.js'; //TEST
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
@@ -17,6 +18,7 @@ const Practice = () => {
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
+    const interpreter = new Interpreter(); // Creating an Interpreter object to use Interpreter methods TEST
 
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
@@ -24,7 +26,8 @@ const Practice = () => {
         e.preventDefault();
         const code = codeValueRef.current;
         try {
-            const result = await tutorAgent.executeCode(code); // Assuming there's a method to execute code
+            // Testing interpreter
+            const result = await interpreter.runPython(code); // Assuming there's a method to execute code
             setOutput(result);
         } catch (error) {
             setOutput(`Error: ${error.message}`);
