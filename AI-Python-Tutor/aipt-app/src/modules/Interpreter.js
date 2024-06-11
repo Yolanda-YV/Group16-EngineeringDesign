@@ -12,21 +12,23 @@ import { loadPyodide } from '../utilities/LoadPyodideUtil.js';
 
 class Interpreter {
     constructor() {
-        this.pyodide = this.initPyodide();
+        this.pyodideInstance = null;
     }
     async initPyodide() {
         try {
-            const pyodideInstance = await loadPyodide();
-            return pyodideInstance;
+            this.pyodideInstance = await loadPyodide();
+            console.log("Pyodide loaded successfully")
         } catch (error) {
-            console.error("Failed to load Pyodide", error);
-            return null;
+            console.error("ERROR. Failed to load Pyodide", error);
         }
     };
-    async runPython(code) {
-        if (this.pyodide) {
+     runPython(code) {
+        if (this.pyodideInstance) {
             try {
-                const result = await this.pyodide.runPythonAsync(code);
+                // const result = await this.pyodideInstance.runPythonAsync(code);
+                const result = null;
+                this.pyodideInstance.runPython(`print(2)`).then((res) => console.log(res));
+                //console.log("Python code executed successfully", result);
                 return result;
             } catch (error) {
                 console.error("ERROR", error);

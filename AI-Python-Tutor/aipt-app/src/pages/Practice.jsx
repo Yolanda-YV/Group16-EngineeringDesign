@@ -27,6 +27,7 @@ const Practice = () => {
         const code = codeValueRef.current;
         try {
             // Testing interpreter
+            await interpreter.initPyodide();
             const result = await interpreter.runPython(code); // Assuming there's a method to execute code
             setOutput(result);
         } catch (error) {
