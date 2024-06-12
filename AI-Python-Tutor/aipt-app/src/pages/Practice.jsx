@@ -28,7 +28,8 @@ const Practice = () => {
         try {
             // Testing interpreter
             await interpreter.initPyodide();
-            const result = await interpreter.runPython(code); // Assuming there's a method to execute code
+            const result = await interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
+            console.log(result) // Testing output format --- Like code from AI tutor, this needs to be formatted too
             setOutput(result);
         } catch (error) {
             setOutput(`Error: ${error.message}`);

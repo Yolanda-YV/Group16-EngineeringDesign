@@ -22,13 +22,26 @@ class Interpreter {
             console.error("ERROR. Failed to load Pyodide", error);
         }
     };
-     runPython(code) {
+    async runPython(code) {
         if (this.pyodideInstance) {
             try {
-                // const result = await this.pyodideInstance.runPythonAsync(code);
-                const result = null;
-                this.pyodideInstance.runPython(`print(2)`).then((res) => console.log(res));
-                //console.log("Python code executed successfully", result);
+                // Redirecting stdout to capture print output
+                //  NOTE: by default, print output is not captured
+                this.pyodideInstance.runPython(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+
+                // Running the python code
+                await this.pyodideInstance.runPythonAsync(code);
+
+                // Getting the value of stdout (the captured output)
+                const result = this.pyodideInstance.runPython(`
+                    sys.stdout.getvalue()
+                `);
+                
+                console.log("Python code executed successfully");
                 return result;
             } catch (error) {
                 console.error("ERROR", error);
