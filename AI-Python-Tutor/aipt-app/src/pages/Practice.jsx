@@ -60,7 +60,7 @@ const Practice = () => {
             // Add user prompt to chat history
             setChatHistory(prevChatHistory => [
                 ...prevChatHistory, 
-                {content: prompt, type: 'user'}
+                {role: 'user', content: prompt}
             ]);
             
             // NOTE: This is where the request to the Prompt Agent is made
@@ -73,7 +73,7 @@ const Practice = () => {
             // Add tutor response to chat history
             setChatHistory(prevChatHistory => [
                 ...prevChatHistory, 
-                {content: formattedFeedback, type: 'tutor'}
+                {role: 'tutor', content: formattedFeedback}
             ]);
 
             // Testing output

@@ -4,6 +4,15 @@ import supabase from '../utilities/Supabase.js';
 class TutorAgent {
     constructor() {}
     async requestResponse(prompt) {
+        // Test chat history
+        const history = [
+            {role: 'user', content: "I have a dog named Bob and a cat named Bobbert"},
+            {role: 'assistant', content: "That's adorable! It sounds like you have a lot of fun with Bob and Bobbert. Do they get along well?"},
+            {role: 'user', content: "They get along well"},
+            {role: 'assistant', content: "That's great to hear! It's always wonderful when pets get along. Do they have any favorite activities or toys they like to play with together?"}
+        ]
+        
+
         const response = await fetch("/.netlify/functions/Response", {
             method: "POST",
             headers: { 'Content-Type': 'text/plain' },
