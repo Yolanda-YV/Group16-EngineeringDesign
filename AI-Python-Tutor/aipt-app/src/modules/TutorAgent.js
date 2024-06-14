@@ -11,12 +11,13 @@ class TutorAgent {
             {role: 'user', content: "They get along well"},
             {role: 'assistant', content: "That's great to hear! It's always wonderful when pets get along. Do they have any favorite activities or toys they like to play with together?"}
         ]
-        
+
+        const data = {history: history, prompt: prompt}
 
         const response = await fetch("/.netlify/functions/Response", {
             method: "POST",
-            headers: { 'Content-Type': 'text/plain' },
-            body: `${prompt}`,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
         });
         const completion = await response.text();
         return completion;

@@ -8,13 +8,17 @@ export default async (event, context) => {
     for await (const chunk of event.body) {
         data.push(chunk);
     }
-    const prompt = Buffer.concat(data).toString();
+    let dataStr = Buffer.concat(data).toString();
+
+    // parse the JSON string to an object
+    const dataObj = JSON.parse(dataStr);
 
     // make a request to the OpenAI API
     const completion = await openai.chat.completions.create({
         messages: [
-            { role: "system", content: "You are a tutor that teaches Python programming." }, 
-            {role: "user", content: `${prompt}`}],
+            {role: "system", content: "You are a tutor that teaches Python programming."}, 
+            ...dataObj.history,
+            {role: "user", content: `${prompt.prompt}`}],
         model: "gpt-3.5-turbo",
     });
     return new Response(completion.choices[0].message.content, {status: 200,  statusText: "OK"});
