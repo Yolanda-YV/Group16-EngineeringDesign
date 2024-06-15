@@ -43,6 +43,7 @@ const Practice = () => {
     
             // Update the output with the response from the tutor agent
             setOutput(formattedCode);
+
         } catch (error) {
             console.error('Error handling code submission:', error);
             // Handle errors here, such as displaying an error message to the user

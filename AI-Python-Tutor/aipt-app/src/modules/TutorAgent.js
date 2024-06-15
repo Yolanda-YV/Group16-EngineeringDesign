@@ -4,23 +4,27 @@ import supabase from '../utilities/Supabase.js';
 class TutorAgent {
     constructor() {}
     async requestResponse(prompt) {
-        // Test chat history
-        const history = [
-            {role: 'user', content: "I have a dog named Bob and a cat named Bobbert"},
-            {role: 'assistant', content: "That's adorable! It sounds like you have a lot of fun with Bob and Bobbert. Do they get along well?"},
-            {role: 'user', content: "They get along well"},
-            {role: 'assistant', content: "That's great to hear! It's always wonderful when pets get along. Do they have any favorite activities or toys they like to play with together?"}
-        ]
+        // This function will call the Response serverless function to get a response from OPENAI
 
+        // Get chat history
+        const history = await this.getUserChat();
+
+        // Putting chat history and new prompt together
         const data = {history: history, prompt: prompt}
-        console.log(data);
 
+        // Make a request to the Response serverless function
         const response = await fetch("/.netlify/functions/Response", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         });
         const completion = await response.text();
+
+        // Save chat history
+        if (completion) {
+            await this.saveUserChat(prompt, completion);
+        }
+
         return completion;
     }
     submitCode(code) {
@@ -44,12 +48,43 @@ class TutorAgent {
 
     // Database functions
     // Gets current user and returns the user object
-    async getUser() {
-        const { user, error } = await supabase.auth.user();
-        if (error) {
-            return error;
-        } else {
-            return user;
+    async getUserChat() {
+        // Getting user
+        const { data:{user} } = await supabase.auth.getUser();
+        // If user exists, get chat data
+        if (user) {
+            const { data, error } = await supabase
+                .from('Chat')
+                .select('role, content')
+                .eq('user_id', user.id)
+                .order('created_at', {ascending: true});
+            if (data) {
+                console.log('data:', data);
+                return data;
+            } else {
+                console.error('Error getting chat data:', error);
+                return error;
+            }
+        }
+    }
+    async saveUserChat(content1, content2) {
+        // Getting user
+        const { data:{user} } = await supabase.auth.getUser();
+        // If user exists, save chat data
+        if (user) {
+            const { data, error } = await supabase
+                .from('Chat')
+                .insert([
+                    {user_id: user.id, role: 'user', content: content1},
+                    {user_id: user.id, role: 'assistant', content: content2}
+                ]);
+            if (data) {
+                console.log('data:', data);
+                return data;
+            } else {
+                console.error('Error saving chat data:', error);
+                return error;
+            }
         }
     }
 }
