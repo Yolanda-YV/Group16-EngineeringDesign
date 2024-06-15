@@ -14,7 +14,7 @@ const Practice = () => {
     // - doesn't trigger a re-render on change)
     const [output, setOutput] = useState(`Output will be displayed here:`)
     const [chatHistory, setChatHistory] = useState([])
-    const [task, setTask] = useState("Print the sum of two numbers")
+    const [task, setTask] = useState("No task yet!")
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
@@ -71,9 +71,23 @@ const Practice = () => {
                 ...prevChatHistory, 
                 {content: formattedFeedback, type: 'tutor'}
             ]);
+
+            // Testing output
+            console.log('formattedFeedback:', formattedFeedback);
         } catch (error) {
             console.error('Error handling prompt submission:', error);
             // Handle errors here, such as displaying an error message to the user
+        }
+    }
+    
+    // Handles task retrieval, will call tutor agent to get a response
+    // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
+    const getTask = async () => {
+        try {
+            const task = await tutorAgent.getTask();
+            setTask(task);
+        } catch (error) {
+            console.error('Error getting task:', error);
         }
     }
 
@@ -95,7 +109,7 @@ const Practice = () => {
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit} />
-            <Output output={output} task={task} />
+            <Output output={output} task={task} getTask={getTask} />
         </div>
     );
 }

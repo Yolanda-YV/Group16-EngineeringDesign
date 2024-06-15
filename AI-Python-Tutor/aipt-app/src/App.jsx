@@ -14,15 +14,6 @@ import supabase from './utilities/Supabase.js'
 function App() {
   const [session, setSession] = useState(null)
   useEffect(() => {
-    // supabase.auth.getSession().then(( {data: {session}} ) => {
-    //   setSession(session)
-    // })
-    // const { data: {subscription} } = supabase.auth.onAuthStateChange(( _event, session ) => {
-    //   setSession(session)
-    // })
-    // return () => {
-    //   subscription.unsubscribe()
-    // }
     const { data } = supabase.auth.onAuthStateChange( (event, session) => {
       console.log(event, session) // For testing purposes
       setSession(session) // If session is null, user is not signed in (INITIAL_SESSION and SIGNED_OUT)
