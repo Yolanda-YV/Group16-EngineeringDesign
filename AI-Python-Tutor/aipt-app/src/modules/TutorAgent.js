@@ -13,6 +13,7 @@ class TutorAgent {
         ]
 
         const data = {history: history, prompt: prompt}
+        console.log(data);
 
         const response = await fetch("/.netlify/functions/Response", {
             method: "POST",
@@ -38,6 +39,17 @@ class TutorAgent {
         } else {
             const index = Math.floor(Math.random() * (data.length - 1) + 1);
             return data[index].content;
+        }
+    }
+
+    // Database functions
+    // Gets current user and returns the user object
+    async getUser() {
+        const { user, error } = await supabase.auth.user();
+        if (error) {
+            return error;
+        } else {
+            return user;
         }
     }
 }
