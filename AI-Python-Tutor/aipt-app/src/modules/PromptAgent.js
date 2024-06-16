@@ -95,21 +95,31 @@ class PromptAgent {
 
     // Tutor feedback: format tutor feedback and send to web application
     formatTutorFeedback(feedback) {
-        // Format the tutor feedback for display in the web application
-        // Replace newline characters with <br> tags for HTML formatting
-        feedback = feedback.replace(/\n/g, '<br>');
+        try {
+            // Format the tutor feedback for display in the web application
+            // Replace newline characters with <br> tags for HTML formatting
+            feedback = feedback.replace(/\n/g, '<br>');
 
-        // Wrap code snippets in <code> tags for HTML formatting
-        feedback = feedback.replace(/`(.*?)`/g, '<code>$1</code>');
+            // Wrap code snippets in <code> tags for HTML formatting
+            feedback = feedback.replace(/`(.*?)`/g, '<code>$1</code>');
 
-        return feedback;
+            return feedback;
+        } catch (error) {
+            console.error('Error formatting tutor feedback:', error);
+            return feedback; // Return original feedback if there's an error
+        }
     }
 
     // Validator feedback: format validator feedback and send to web application
     formatValidatorFeedback(feedback) {
-        // Format the validator feedback for display in the web application
-        // Add your formatting logic here
-        return feedback;
+        try {
+            // Format the validator feedback for display in the web application
+            // Add your formatting logic here
+            return feedback;
+        } catch (error) {
+            console.error('Error formatting validator feedback:', error);
+            return feedback; // Return original feedback if there's an error
+        }
     }
 
     // from the tutor agent, send a task to web application
