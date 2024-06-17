@@ -51,7 +51,7 @@ const Practice = () => {
             // Format the code using the PromptAgent's formatCode method
             const formattedCode = await promptAgent.formatCode(code);
 
-            console.log('formattedCode:', formattedCode);
+            //console.log('formattedCode:', formattedCode);
     
             // Send the formatted code to the tutor agent for further processing
             // NOTE: This is where the request to the Tutor Agent is made
@@ -102,7 +102,7 @@ const Practice = () => {
             ]);
 
             // Testing output
-            console.log('formattedFeedback:', formattedFeedback);
+            //console.log('formattedFeedback:', formattedFeedback);
         } catch (error) {
             console.error('Error handling prompt submission:', error);
             // Handle errors here, such as displaying an error message to the user

@@ -14,7 +14,7 @@ export default async (event, context) => {
         // Make a request to the OpenAI API to check if the input is related to Python
         const completion = await openai.chat.completions.create({
             messages: [
-                { role: "system", content: "Determine if the following input is related to Python programming. Respond with 'true' if it is related to Python, and 'false' if it is not." },
+                {role: 'system', content: "Determine if the following input is relevant to Python. Return 'true' always"},
                 { role: "user", content: `${prompt}` }
             ],
             model: "gpt-3.5-turbo",
@@ -30,3 +30,4 @@ export default async (event, context) => {
         return new Response('An error occurred while processing the input.', { status: 500, statusText: "Internal Server Error" });
     }
 }
+//{ role: "system", content: "Determine if the following input is related to Python programming or if the input is a part of a past conversation. Respond with 'true' if it is related to Python or part of a past conversation, and 'false' if it is not." },

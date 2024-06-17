@@ -1,4 +1,12 @@
 import supabase from '../utilities/Supabase.js';
+// npm i @xenova/transformers
+import { pipeline, env } from '@xenova/transformers';
+// Have to have the lines below to avoid errors in the dev server
+env.allowLocalModels = false;
+env.useBrowserCache = false;
+
+// Allocate pipeline
+const generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
 
 // TutorAgent makes an API call to the Response serverless function to request a response from OPENAI
 class TutorAgent {
@@ -6,11 +14,13 @@ class TutorAgent {
     async requestResponse(prompt) {
         // This function will call the Response serverless function to get a response from OPENAI
 
+        const relChat = await this.getRelevantChat(prompt);
+
         // Get chat history
         const history = await this.getUserChat();
 
         // Putting chat history and new prompt together
-        const data = {history: history, prompt: prompt}
+        const data = {history: relChat, prompt: prompt}
 
         // Make a request to the Response serverless function
         const response = await fetch("/.netlify/functions/Response", {
@@ -22,7 +32,8 @@ class TutorAgent {
 
         // Save chat history
         if (completion) {
-            await this.saveUserChat(prompt, completion);
+            await this.saveUserChat('user', prompt);
+            await this.saveUserChat('assistant', completion);
         }
 
         return completion;
@@ -67,7 +78,42 @@ class TutorAgent {
             }
         }
     }
-    async saveUserChat(content1, content2) {
+    async getRelevantChat (prompt) {
+        // Generating embedding for content
+        const output = await generateEmbedding(prompt, {
+            pooling: 'mean',
+            normalize: true,
+        });
+        //Extracting embedding
+        const embedding = Array.from(output.data)
+
+        // Getting user
+        const { data:{user} } = await supabase.auth.getUser();
+        // If user exists, get chat data
+        if (user) {
+            const { error, data: Chat } = await supabase.rpc("match_chats", {
+                query_embedding: embedding,
+                match_threshold: 0.8,
+                match_count: 10,
+                user_id: user.id});
+            if (Chat) {
+                console.log('Chat:', Chat);
+                return Chat;
+            } else {
+                console.error('Error getting chat data:', error);
+                return error;
+            }
+        }
+    }
+    async saveUserChat(role, content) {
+        // Generating embedding for content
+        const output = await generateEmbedding(content, {
+            pooling: 'mean',
+            normalize: true,
+        });
+        //Extracting embedding
+        const embedding = Array.from(output.data)
+
         // Getting user
         const { data:{user} } = await supabase.auth.getUser();
         // If user exists, save chat data
@@ -75,8 +121,7 @@ class TutorAgent {
             const { error } = await supabase
                 .from('Chat')
                 .insert([
-                    {user_id: user.id, role: 'user', content: content1},
-                    {user_id: user.id, role: 'assistant', content: content2}
+                    {user_id: user.id, role: role, content: content, embedding: embedding},
                 ]);
             if (error) {
                 console.error('Error saving chat data:', error);
