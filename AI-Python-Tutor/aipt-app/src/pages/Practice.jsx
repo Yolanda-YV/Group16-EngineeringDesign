@@ -56,14 +56,12 @@ const Practice = () => {
             try {
                 // Testing interpreter
                 await interpreter.initPyodide();
-                const result = await interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
+                const result = await interpreter.runPython(formattedCode); // When merging changes, this will instead be a tutor agent method that calls this via the validator
                 console.log(result) // Testing output format --- Like code from AI tutor, this needs to be formatted too
                 setOutput(result);
             } catch (error) {
                 setOutput(`Error: ${error.message}`);
             }
-            // Update the output with the response from the tutor agent
-            setOutput(formattedCode);
 
         } catch (error) {
             console.error('Error handling code submission:', error);

@@ -78,13 +78,9 @@ class TutorAgent {
                     {user_id: user.id, role: 'user', content: content1},
                     {user_id: user.id, role: 'assistant', content: content2}
                 ]);
-            if (data) {
-                console.log('Data saved successfully!');
-                return data;
-            } else {
+            if (error) {
                 console.error('Error saving chat data:', error);
-                return error;
-            }
+            } 
         }
     }
 }
