@@ -1,4 +1,4 @@
-import react from 'react';
+import react, { useEffect } from 'react';
 import { useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import '../index.css';
@@ -20,6 +20,16 @@ const Practice = () => {
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
     const promptAgent = new PromptAgent(); // Creating a PromptAgent object to user PromptAgent methods
+
+    useEffect(() => {
+        // Retrieving chat history from the TutorAgent
+        const loadChat = async () => {
+            const chat = await tutorAgent.getUserChat();
+            setChatHistory(chat);
+        };
+        loadChat();
+    }, []);
+
 
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
