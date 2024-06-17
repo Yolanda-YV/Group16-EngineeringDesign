@@ -28,6 +28,12 @@ const Practice = () => {
         // Retrieving chat history from the TutorAgent
         const loadChat = async () => {
             const chat = await tutorAgent.getUserChat();
+            // Formatting chat history because they are not saved with html formatting
+            chat.forEach((chatItem) => {
+                if (chatItem.role === 'assistant') {
+                    chatItem.content = promptAgent.formatTutorFeedback(chatItem.content);
+                }
+            });
             setChatHistory(chat);
         };
         loadChat();

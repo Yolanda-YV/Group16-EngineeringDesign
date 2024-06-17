@@ -98,10 +98,20 @@ class PromptAgent {
         try {
             // Format the tutor feedback for display in the web application
             // Replace newline characters with <br> tags for HTML formatting
+            console.log(feedback)
             feedback = feedback.replace(/\n/g, '<br>');
 
             // Wrap code snippets in <code> tags for HTML formatting
-            feedback = feedback.replace(/`(.*?)`/g, '<code>$1</code>');
+            // feedback = feedback.replace(/`(.*?)`/g, '<code>$1</code>');
+            // Modified the above code to handle code blocks and inline code
+            //  EX: ```code block``` and `inline code`
+            //  The original code would turn (`) into (<code>) which would mess with the formatting
+            feedback = feedback.replace(/`{3}(.*?)`{3}/g, '<code>$1</code>');
+            feedback = feedback.replace(/(?=)(python)/g, '<div>$1</div>'); // To modify the python header
+            feedback = feedback.replace(/`{1}(.*?)`{1}/g, '<code>$1</code>');
+            //feedback = feedback.replace(/<code>(<br>)/g, ''); // To modify the python header
+
+            console.log(feedback)
 
             return feedback;
         } catch (error) {
