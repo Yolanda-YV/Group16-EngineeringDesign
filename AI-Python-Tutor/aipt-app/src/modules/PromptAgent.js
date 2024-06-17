@@ -16,13 +16,13 @@ class PromptAgent {
                 const feedback = await this.tutorAgent.requestResponse(formattedCode);
                 return feedback;
             } else if (type === 'prompt') {
-                const filteredInput = this.filterInput(input);
+                const isPythonRelated = await this.filterInput(input);
 
-                if (!filteredInput) {
+                if (!isPythonRelated) {
                     return 'The input does not seem to be related to Python. Please provide a Python-related query.';
                 }
 
-                const feedback = await this.tutorAgent.requestResponse(filteredInput);
+                const feedback = await this.tutorAgent.requestResponse(input);
                 return feedback;
             } else {
                 return 'Unknown input type. Please provide either code or a prompt.';
@@ -34,54 +34,28 @@ class PromptAgent {
     }
 
     // prompt input: if it's python relevant, send to tutor agent; if not, inform user in web application
-    filterInput(input) {
-        const pythonRelatedKeywords = [
-        // Functional Programming
-        'lambda', 'map', 'filter', 'reduce', 'decorator', 
-        'generator', 'yield', 'iter', 'next',
-    
-        // Data Structures
-        'list', 'dict', 'set', 'tuple', 'deque', 
-        'defaultdict', 'Counter', 'OrderedDict', 'namedtuple',
-    
-        // Standard Library
-        'os', 'sys', 'math', 'datetime', 'json', 'csv', 're', 
-        'collections', 'itertools', 'functools', 'random', 
-        'time', 'logging', 'argparse', 'subprocess', 'unittest', 
-        'threading', 'multiprocessing', 'sqlite3',
-    
-        // Built-in Functions
-        'print', 'len', 'type', 'input', 'int', 'str', 'float', 
-        'list', 'dict', 'set', 'tuple', 'range', 'sum', 'max', 
-        'min', 'sorted', 'zip', 'map', 'filter', 'open', 
-        'enumerate', 'dir', 'help', 'isinstance', 'getattr', 
-        'setattr', 'hasattr', 'delattr', 'all', 'any', 'abs', 
-        'bin', 'bool', 'bytearray', 'bytes', 'callable', 'chr', 
-        'classmethod', 'compile', 'complex', 'delattr', 'dict', 
-        'dir', 'divmod', 'eval', 'exec', 'format', 'frozenset', 
-        'globals', 'hasattr', 'hash', 'hex', 'id', 'input', 'isinstance', 
-        'issubclass', 'iter', 'len', 'list', 'locals', 'map', 'max', 
-        'memoryview', 'min', 'next', 'object', 'oct', 'open', 'ord', 
-        'pow', 'property', 'range', 'repr', 'reversed', 'round', 'set', 
-        'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 
-        'tuple', 'type', 'vars', 'zip', '__import__',
-    
-        // Keywords
-        'False', 'None', 'True', 'and', 'as', 'assert', 'async', 
-        'await', 'break', 'class', 'continue', 'def', 'del', 
-        'elif', 'else', 'except', 'finally', 'for', 'from', 
-        'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal', 
-        'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 
-        'with', 'yield', 'python', 'Python'
-        ];
+    async filterInput(input) {
+        try {
+            const response = await fetch("/.netlify/functions/Prompt", {
+                method: "POST",
+                headers: { 'Content-Type': 'text/plain' },
+                body: input,
+            });
 
-        const isPythonRelated = pythonRelatedKeywords.some(keyword => input.includes(keyword));
+            if (!response.ok) {
+                console.error('Failed to fetch');
+                return false;
+            }
 
-        if (!isPythonRelated) {
-            return null;
+            const data = await response.text();
+            console.log('Serverless Function Data:', data);
+
+            // Return true if the input is Python related, otherwise false
+            return data.trim() === "true";
+        } catch (error) {
+            console.error('Error filtering input:', error);
+            return false; // Return false in case of error
         }
-
-        return input;
     }
 
     // code input: format code then send to tutor agent
@@ -121,21 +95,41 @@ class PromptAgent {
 
     // Tutor feedback: format tutor feedback and send to web application
     formatTutorFeedback(feedback) {
-        // Format the tutor feedback for display in the web application
-        // Replace newline characters with <br> tags for HTML formatting
-        feedback = feedback.replace(/\n/g, '<br>');
+        try {
+            // Format the tutor feedback for display in the web application
+            // Replace newline characters with <br> tags for HTML formatting
+            console.log(feedback)
+            feedback = feedback.replace(/\n/g, '<br>');
 
-        // Wrap code snippets in <code> tags for HTML formatting
-        feedback = feedback.replace(/`(.*?)`/g, '<code>$1</code>');
+            // Wrap code snippets in <code> tags for HTML formatting
+            // feedback = feedback.replace(/`(.*?)`/g, '<code>$1</code>');
+            // Modified the above code to handle code blocks and inline code
+            //  EX: ```code block``` and `inline code`
+            //  The original code would turn (`) into (<code>) which would mess with the formatting
+            feedback = feedback.replace(/`{3}(.*?)`{3}/g, '<code>$1</code>');
+            feedback = feedback.replace(/(?=)(python)/g, '<div>$1</div>'); // To modify the python header
+            feedback = feedback.replace(/`{1}(.*?)`{1}/g, '<code>$1</code>');
+            //feedback = feedback.replace(/<code>(<br>)/g, ''); // To modify the python header
 
-        return feedback;
+            console.log(feedback)
+
+            return feedback;
+        } catch (error) {
+            console.error('Error formatting tutor feedback:', error);
+            return feedback; // Return original feedback if there's an error
+        }
     }
 
     // Validator feedback: format validator feedback and send to web application
     formatValidatorFeedback(feedback) {
-        // Format the validator feedback for display in the web application
-        // Add your formatting logic here
-        return feedback;
+        try {
+            // Format the validator feedback for display in the web application
+            // Add your formatting logic here
+            return feedback;
+        } catch (error) {
+            console.error('Error formatting validator feedback:', error);
+            return feedback; // Return original feedback if there's an error
+        }
     }
 
     // from the tutor agent, send a task to web application

@@ -33,10 +33,22 @@ code {
 code:has(br) {
   border: solid 0.1rem var(--color-surface-4);
   display: inline-block;
-  padding: 0.25rem 0.25rem 0.25rem 1.5rem;
+  padding: 0.25rem 0.25rem 0.5rem 1.5rem;
 }
 code:empty {
   display: none;
+}
+code div {
+  color: var(--color-primary-2);
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  margin-left: -1.6rem;
+  margin-right: -0.35rem;
+  margin-top: -0.25rem;
+  text-align: left;
+  background-color: var(--color-surface-4);
+}
+code br:first-child {
+  
 }
 input {
   width: 100%;
