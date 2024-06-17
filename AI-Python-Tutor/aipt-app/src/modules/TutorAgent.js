@@ -72,14 +72,14 @@ class TutorAgent {
         const { data:{user} } = await supabase.auth.getUser();
         // If user exists, save chat data
         if (user) {
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('Chat')
                 .insert([
                     {user_id: user.id, role: 'user', content: content1},
                     {user_id: user.id, role: 'assistant', content: content2}
                 ]);
             if (data) {
-                console.log('data:', data);
+                console.log('Data saved successfully!');
                 return data;
             } else {
                 console.error('Error saving chat data:', error);

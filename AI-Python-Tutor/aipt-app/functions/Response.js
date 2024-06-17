@@ -2,6 +2,23 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({apiKey: process.env.VITE_OPENAI_API_KEY});
 
+// Helper functions to summarize large chat histories
+// 1. summarizeText
+//    - Takes text and returns a summarized version using an LLM
+const summarizeText = async () => {
+    const completion = await openai.chat.completions.create({
+        messages: [
+            {role: "system", content: "You are an assistant that summarizes the user's chat history for the tutor to reference."},
+        ],
+        model: "gpt-3.5-turbo",
+    })
+    return completion.choices[0].message.content;
+};
+// 2. chunkHistory
+//    - Takes a large chat history and chunks it into smaller pieces
+const chunkHistory = () => {};
+
+// Main function to handle the response
 export default async (event, context) => {
     // the event.body comes as a ReadableStream, so we need to convert it to a string
     let data = [];
