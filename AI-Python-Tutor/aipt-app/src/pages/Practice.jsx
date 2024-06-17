@@ -7,6 +7,7 @@ import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
 import { TutorAgent } from '../modules/TutorAgent.js';
 import { PromptAgent } from '../modules/PromptAgent.js';
+import { Interpreter } from '../modules/Interpreter.js'; //TEST
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
@@ -19,6 +20,8 @@ const Practice = () => {
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
+    const interpreter = new Interpreter(); // Creating an Interpreter object to use Interpreter methods TEST
+    
     const promptAgent = new PromptAgent(); // Creating a PromptAgent object to user PromptAgent methods
 
     useEffect(() => {
@@ -29,7 +32,6 @@ const Practice = () => {
         };
         loadChat();
     }, []);
-
 
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
@@ -50,7 +52,16 @@ const Practice = () => {
             //       Tutor Agent will call the Validator Agent to validate and interpret the code (using the interpreter)
             //        Validator Agent will return the validator's feedback and the interpreter's feedback
             // const response = await tutorAgent.submitCode(formattedCode);
-    
+            // Using Interpreter directing for TESTING PURPOSES
+            try {
+                // Testing interpreter
+                await interpreter.initPyodide();
+                const result = await interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
+                console.log(result) // Testing output format --- Like code from AI tutor, this needs to be formatted too
+                setOutput(result);
+            } catch (error) {
+                setOutput(`Error: ${error.message}`);
+            }
             // Update the output with the response from the tutor agent
             setOutput(formattedCode);
 
@@ -59,7 +70,6 @@ const Practice = () => {
             // Handle errors here, such as displaying an error message to the user
         }
     };
-    
     
     // Handles prompt submission, will call prompt agent to get response
     // Prompt agent will take prompt, filter prompt, and use it to get a response from the tutor agent
