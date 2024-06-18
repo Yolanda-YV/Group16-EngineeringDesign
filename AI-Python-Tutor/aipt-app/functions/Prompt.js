@@ -30,4 +30,3 @@ export default async (event, context) => {
         return new Response('An error occurred while processing the input.', { status: 500, statusText: "Internal Server Error" });
     }
 }
-//

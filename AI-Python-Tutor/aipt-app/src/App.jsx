@@ -15,7 +15,6 @@ function App() {
   const [session, setSession] = useState(null)
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange( (event, session) => {
-      console.log(event, session) // For testing purposes
       setSession(session) // If session is null, user is not signed in (INITIAL_SESSION and SIGNED_OUT)
     })
     return () => {

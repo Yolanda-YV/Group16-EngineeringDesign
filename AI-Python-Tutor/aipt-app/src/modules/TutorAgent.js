@@ -3,21 +3,22 @@ import supabase from '../utilities/Supabase.js';
 import { pipeline, env } from '@xenova/transformers';
 // Have to have the lines below to avoid errors in the dev server
 env.allowLocalModels = false;
-env.useBrowserCache = false;
+//env.useBrowserCache = false;
+
+import { Interpreter } from './Interpreter.js';
 
 // Allocate pipeline
 const generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
 
 // TutorAgent makes an API call to the Response serverless function to request a response from OPENAI
 class TutorAgent {
-    constructor() {}
+    constructor() {
+        this.interpreter = new Interpreter();
+    }
     async requestResponse(prompt) {
         // This function will call the Response serverless function to get a response from OPENAI
 
         const relChat = await this.getRelevantChat(prompt);
-
-        // Get chat history
-        const history = await this.getUserChat();
 
         // Putting chat history and new prompt together
         const data = {history: relChat, prompt: prompt}
@@ -38,22 +39,61 @@ class TutorAgent {
 
         return completion;
     }
-    submitCode(code) {
+    async submitCode(code, task) {
         // This function will call a ValidatorAgent method/function to validate and interpret the code
         //   The code will be sent as a string to the ValidatorAgent
         //   The ValidatorAgent will return a response and output
+        try {
+            // Validator should be called here, with the code and task, but since it's not implemented, calling Interpreter here
+            //  with made up valaidator response
+            
+            // Boolean to check if code is correct
+            const isCorrect = true; // This will be replaced by the validator response
+            const feedback = 'Good job!'; // This will be replaced by the validator response
+
+            await this.interpreter.initPyodide();
+            const output = await this.interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
+            console.log(output) // Testing output format --- Like code from AI tutor, this needs to be formatted too
+
+            // // Checking if this is an in-progress task or not
+            const { data:{user} } = await supabase.auth.getUser(); // Getting user
+
+            // If task exists, update the score, otherwise don't
+            if (task.id) {
+                // Testing DB function update_score()
+                const { data, error } = await supabase.rpc("update_score", {
+                    u_id: user.id,
+                    t_id: task.id,
+                    is_correct: isCorrect,
+                    val_response: feedback
+                });
+                if (error) {
+                    console.error('Error updating score:', error);
+                } else {
+                    console.log('Successfully updated score');
+                }
+            }
+            
+
+            return output;
+        } catch (error) {
+            console.error('Error handling code submission:', error);
+            return `Error: ${error.message}`;
+        }
+
+        
     }
     async getTask() {
         // This function will get a task from the database based on user progress/skill
         //  For early testing purposes, this will be random and not based on user progress
         const { data, error } = await supabase
             .from('Tasks')
-            .select('content')
+            .select('id, content')
         if (error) {
             return error;
         } else {
             const index = Math.floor(Math.random() * (data.length - 1) + 1);
-            return data[index].content;
+            return data[index];
         }
     }
 
@@ -70,7 +110,7 @@ class TutorAgent {
                 .eq('user_id', user.id)
                 .order('created_at', {ascending: true});
             if (data) {
-                console.log('data:', data);
+                // console.log('data:', data);
                 return data;
             } else {
                 console.error('Error getting chat data:', error);

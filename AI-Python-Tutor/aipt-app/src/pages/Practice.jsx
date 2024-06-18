@@ -15,7 +15,7 @@ const Practice = () => {
     // - doesn't trigger a re-render on change)
     const [output, setOutput] = useState(`Output will be displayed here:`) // Interpreter feedback
     const [chatHistory, setChatHistory] = useState([])
-    const [task, setTask] = useState("No task yet!")
+    const [task, setTask] = useState({description: "No task yet!", id: null})
     const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
@@ -57,17 +57,8 @@ const Practice = () => {
             // NOTE: This is where the request to the Tutor Agent is made
             //       Tutor Agent will call the Validator Agent to validate and interpret the code (using the interpreter)
             //        Validator Agent will return the validator's feedback and the interpreter's feedback
-            // const response = await tutorAgent.submitCode(formattedCode);
-            // Using Interpreter directing for TESTING PURPOSES
-            try {
-                // Testing interpreter
-                await interpreter.initPyodide();
-                const result = await interpreter.runPython(formattedCode); // When merging changes, this will instead be a tutor agent method that calls this via the validator
-                console.log(result) // Testing output format --- Like code from AI tutor, this needs to be formatted too
-                setOutput(result);
-            } catch (error) {
-                setOutput(`Error: ${error.message}`);
-            }
+            const response = await tutorAgent.submitCode(formattedCode, task);
+            setOutput(response);
 
         } catch (error) {
             console.error('Error handling code submission:', error);
@@ -114,7 +105,8 @@ const Practice = () => {
     const getTask = async () => {
         try {
             const task = await tutorAgent.getTask();
-            setTask(task);
+            const taskObj = {description: task.content, id: task.id}
+            setTask(taskObj);
         } catch (error) {
             console.error('Error getting task:', error);
         }
@@ -138,7 +130,7 @@ const Practice = () => {
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit} />
-            <Output output={output} task={task} getTask={getTask} />
+            <Output output={output} task={task.description} getTask={getTask} />
         </div>
     );
 }
