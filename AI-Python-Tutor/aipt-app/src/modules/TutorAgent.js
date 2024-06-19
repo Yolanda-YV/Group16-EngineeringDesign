@@ -73,7 +73,6 @@ class TutorAgent {
                     console.log('Successfully updated score');
                 }
             }
-            
 
             return output;
         } catch (error) {
