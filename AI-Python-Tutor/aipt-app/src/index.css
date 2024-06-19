@@ -167,15 +167,17 @@
     align-items: stretch; 
     height: calc(100vh - 100px);
 }
+
 /*Dashboard Page*/
-.dashboard-page {
+/* .dashboard-page {
     background-color: var(--color-surface-1);
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: stretch; 
     height: calc(100vh - 100px);
-}
+} */
+
 /*Sign In and Sign Up Page*/
 .sign-page {
     background-color: var(--color-surface-1);
@@ -193,3 +195,49 @@
     width: 51.5rem;
     margin: 1rem;
 }
+
+
+
+
+
+
+/* Ariana's dashboard */
+
+.dashboard-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+  }
+  
+  .user-info-card {
+    background-color: #5a5454;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: white; /* To ensure text is readable on dark background */
+  }
+  
+  .topics-tasks-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    gap: 20px;
+    margin-top: 20px; /* Add some spacing from the user info card */
+  }
+  
+  .topics-card,
+  .tasks-card {
+    flex: 1; /* Grow to fill available space */
+    background-color: #5a5454;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: white; /* To ensure text is readable on dark background */
+    min-width: 500px; /* Ensures cards shrink correctly */
+    max-height: 420px; /* Fixed height for the card */
+    overflow-y: auto; /* Make content scrollable vertically */
+  }
+  
