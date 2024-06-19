@@ -85,6 +85,15 @@ class TutorAgent {
     async getTask() {
         // This function will get a task from the database based on user progress/skill
         //  For early testing purposes, this will be random and not based on user progress
+
+        // Need to get tasks that are:
+        //  - Not completed by the user
+        //  - Associated with the user's skill level
+        // Later, LLM may be included to:
+        //  - Generate tasks based on feedback to user's code
+        //  - Locate tasks in the database that target user's weak areas
+
+        // At same time, need some kind of trigger function to update user's skill level when appropriategit
         const { data, error } = await supabase
             .from('Tasks')
             .select('id, content')
