@@ -3,9 +3,7 @@ import React, { useState, useEffect } from 'react';
 import supabase from '../utilities/Supabase'; // Import Supabase client instance
 
 const Dashboard = () => {
-    const [email, setEmail] = useState('');
-    const [displayName, setDisplayName] = useState('');
-    const [level, setLevel] = useState(null);
+    const [userInfo, setUserInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [tasks, setTasks] = useState([]);
@@ -19,26 +17,16 @@ const Dashboard = () => {
           if (userError) {
             throw userError;
           }
-  
-          console.log('User data:', user);
-  
-          // Set email and display name
-          setEmail(user.email);
-          setDisplayName(user.user_metadata?.display_name);
-  
           // Fetch UserInfo for the logged-in user
           const { data: userInfoData, error: userInfoError } = await supabase
             .from('UserInfo')
-            .select('level')
+            .select('level, username')
             .eq('user_id', user.id)
             .single();
-            
           if (userInfoError) {
             throw userInfoError;
-          }
-  
-          // Set level
-          setLevel(userInfoData.level);
+          } 
+          setUserInfo({username: userInfoData.username, email: user.email, level: userInfoData.level})
 
           // fetch topic and task data
           const { data: topicTasksData, error: topicTasksError } = await supabase
@@ -46,9 +34,9 @@ const Dashboard = () => {
            .select('content, topic_id, Topics (name, level_id)')
            .order('id');
 
-         if (topicTasksError) {
-         throw topicTasksError;
-         }
+          if (topicTasksError) {
+            throw topicTasksError;
+          }
  
          // Set topic tasks data
          setTopicTasksData(topicTasksData);
@@ -83,9 +71,9 @@ const Dashboard = () => {
         <h1>Welcome to the Dashboard</h1>
         <div className='user-info-card'>
           <h2>User Info</h2>
-          <p><strong>Email:</strong> {email}</p>
-          <p><strong>Name:</strong> {displayName}</p>
-          <p><strong>Level:</strong> {level}</p>
+          <p><strong>Email:</strong> {userInfo ? userInfo.email : null}</p>
+          <p><strong>Name:</strong> {userInfo ? userInfo.username : null}</p>
+          <p><strong>Level:</strong> {userInfo ? userInfo.level : null}</p>
         </div>
         <div className='topics-tasks-container'>
         <div className='topics-card'>
