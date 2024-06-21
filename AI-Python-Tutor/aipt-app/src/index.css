@@ -143,7 +143,7 @@
     margin: 1rem;
     gap: 0.5rem;
 }
-.task-card {
+.current-task-card {
     background-color: var(--color-surface-3);
     padding: 1rem;
     border-radius: 0.5rem;
@@ -168,14 +168,26 @@
 .profile-card {
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: center;
+    align-items: center;
     /* align-items: start; */
     background-color: var(--color-surface-2);
     border-radius: 0.5rem;
-    padding: 1rem;
+    padding: 2rem;
     margin: 1rem;
     width: 30%;
     height: fit-content;
+}
+.profile-card img {
+    border-radius: 50%;
+    max-width: 25rem;
+    min-width: 20rem;
+}
+.profile-card div {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 100%;
 }
 /*TopicCards*/
 .topic-cards-container {
@@ -228,18 +240,70 @@
 .task-cards-container {
     max-height: 0;
     overflow: hidden;
-    transition: 0.3s;
+    transition: 0.5s;
 }
 .task-cards-container.active {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    max-height: 500rem;
-    padding: 0.5rem;
+    max-height: 200rem;
+    padding: 0.25rem;
+    overflow-y: auto;
 }
 .task-card {
     display: flex;
+    flex-direction: column;
+    border-top: var(--color-surface-6) solid 0.1rem;
+    border-radius: 0;
+}
+.task-card-info {
+    display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    gap: 1rem;
+}
+.task-card-info-1 {
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    gap: 1rem;
+}
+.task-card-info-2 {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.task-card-info-2 p {
+    min-width: 6rem;
+    text-align: center;
+}
+.task-card-stats p:last-child {
+    min-width: 3rem;
+}
+.task-card-feedback p:first-child:hover {
+    color: var(--color-primary-1);
+    cursor: pointer;
+}
+.task-card-feedback p:first-child:after {
+    content: '\002B';
+    margin: 0.5rem;
+}
+.task-card-feedback p:first-child.active:after {
+    content: '\2212';
+    margin: 0.5rem;
+}
+.task-card-feedback p:last-child {
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.3s;
+}
+.task-card-feedback p:last-child.active {
+    max-height: 10rem;
+    overflow-y: auto;
+    background-color: var(--color-surface-2);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
 }
 
 
@@ -273,7 +337,7 @@
     margin-top: 1rem;
     width: 100rem;
 }
-.dashboard-content h1 {
+.topic-cards-header {
     background-color: var(--color-primary-1);
     color: inherit;
     border-top-right-radius: 0.5rem;

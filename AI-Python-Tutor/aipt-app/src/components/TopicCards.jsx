@@ -42,11 +42,11 @@ const TopicCards = ({statistics, topics}) => {
 
     return (
         <div className='topic-cards-container'>
-            <h1>Topics</h1>
+            <h1 className='topic-cards-header'>Topics</h1>
             {topicList ? (
               topicList.map((topic, index) => (
-                <div className='topic-card' key={index} id={topic.id} onClick={() => onTopicClick(topic.id)}>
-                    <div className='topic-detail'>
+                <div className='topic-card' key={index} id={topic.id}>
+                    <div className='topic-detail' onClick={() => onTopicClick(topic.id)}>
                         <div>
                             <img className='expand-condense-img' src={openedTopic == topic.id ? arrow_up : arrow_down}></img>
                             {topic.name}

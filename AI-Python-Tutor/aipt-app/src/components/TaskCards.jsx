@@ -5,6 +5,7 @@ import supabase from '../utilities/Supabase'
 
 const TaskCards = ({id, isOpen}) => {
     const [tasks, setTasks] = useState(null);
+    const [feedbackIsOpen, setFeedbackIsOpen] = useState(null);
     useEffect(() => {
         if (isOpen) {
             const fetchUserTasks = async () => {
@@ -32,12 +33,30 @@ const TaskCards = ({id, isOpen}) => {
             setTasks(null);
         }
     }, [isOpen]);
+
+    const onFeedbackClick = (index) => {
+        setFeedbackIsOpen(prevFeedbackIsOpen => prevFeedbackIsOpen == index ? null : index);
+    };
+
     return (
         <div className={`task-cards-container ${isOpen && tasks ? 'active' : ''}`}>
             {tasks ? (
               tasks.map((task, index) => (
-                <div className='task-card' key={index} id={task.id}>
-                    {task.content}
+                <div className='task-card' key={index}>
+                    <div className='task-card-info'>
+                        <div className='task-card-info-1'>
+                            <p><strong>{index + 1}.)</strong></p>
+                            <p>{task.content}</p>
+                        </div>
+                        <div className='task-card-info-2'>
+                            <p>{task.status}</p>
+                            <p>{task.score}%</p>
+                        </div>
+                    </div>
+                    <div className='task-card-feedback'>
+                        <p className={feedbackIsOpen == index ? 'active' : ''} onClick={() => onFeedbackClick(index)}><strong>Feedback</strong></p>
+                        <p className={feedbackIsOpen == index ? 'active' : ''}>{task.feedback}</p>
+                    </div>
                 </div>
               ))
             ) : null}
