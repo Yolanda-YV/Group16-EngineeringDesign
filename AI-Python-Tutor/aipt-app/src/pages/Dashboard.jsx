@@ -2,15 +2,16 @@ import '../index.css';
 import React, { useState, useEffect } from 'react';
 import supabase from '../utilities/Supabase'; // Import Supabase client instance
 import ProfileCard from '../components/ProfileCard';
-import TopicDetail from '../components/TopicDetail';
+import TopicCards from '../components/TopicCards';
+import { ClipLoader } from 'react-spinners';
 
 const Dashboard = () => {
     const [userInfo, setUserInfo] = useState(null);
     const [topics, setTopics] = useState(null);
-    const [userTopicCalculation, setUserTopicCalculation] = useState(null)
+    const [topicCalculations, setTopicCalculations] = useState(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState(null);
     const [topicTasksData, setTopicTasksData] = useState([]);
 
     useEffect(() => {
@@ -37,9 +38,19 @@ const Dashboard = () => {
           if (calculatedUserInfoError) {
             throw calculatedUserInfoError;
           }
-          console.log(calculatedUserInfo)
+          // Fetch topics
+          const { data: topicData, topicDataError } = await supabase
+            .from('Topics')
+            .select('id, name');
+          if (topicDataError) {
+            throw topicDataError;
+          }
+          
           setUserInfo({username: userInfoData.username, email: user.email, level: userInfoData.level})
-          setUserTopicCalculation(calculatedUserInfo)
+          setTopicCalculations(calculatedUserInfo)
+          setTopics(topicData);
+          
+          setLoading(false);
 
 
         //   // fetch topic and task data
@@ -77,39 +88,31 @@ const Dashboard = () => {
           setError(error.message);
         }
       };
-      const fetchTopics = async () => {
-        const { data, error } = await supabase
-          .from('Topics')
-          .select('id, name');
-        if (data) {
-          setTopics(data);
-        } else {
-          console.error('Error fetching Topics:', error);
-        }
-      };
       fetchUserData();
-      fetchTopics();
     }, []); // Empty dependency array ensures useEffect runs only once after component mounts
 
-    const fetchUserTasks = () => {
-      // 
-    };
+    
     
     return (
       <div className='dashboard-page'>
-        <div className='dashboard-content'>
-          <ProfileCard userInfo={userInfo} />
-          <div className='topics-container'>
-            <h1>Topics</h1>
-            {topics && userInfo ? (
-              topics.map((topic, index) => (
-                <div className='topic-card' key={index}>
-                  <TopicDetail name={topic.name} id={topic.id} statistics={userTopicCalculation} />
-                </div>
-              ))
-            ) : null}
-          </div>
-        </div>
+        
+          {loading ? (
+            <div className='loader-div'>
+              <ClipLoader
+                color='#088be2'
+                loading={loading}
+                size={80}/>
+            </div>
+          ) : (
+            <div className='dashboard-content'>
+              <ProfileCard userInfo={userInfo} />
+              {topics && topicCalculations ? (
+                <TopicCards 
+                  statistics={topicCalculations}
+                  topics={topics} />
+              ) : null}
+            </div>
+          )}
         
       </div>
     );
