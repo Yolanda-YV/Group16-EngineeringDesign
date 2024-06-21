@@ -4,7 +4,7 @@ import '../index.css';
 const Output = ({output, task, getTask}) => {
     return (
         <div className='output'>
-            <div className='task-card'>
+            <div className='current-task-card'>
                 <h1>Task</h1>
                 <p>{task}</p>
                 <button className='submit-btn' onClick={getTask}>Get Task</button>
