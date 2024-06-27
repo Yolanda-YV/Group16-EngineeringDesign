@@ -1,4 +1,4 @@
-import react from 'react';
+import react, { useEffect } from 'react';
 import { useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import '../index.css';
@@ -7,18 +7,37 @@ import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
 import { TutorAgent } from '../modules/TutorAgent.js';
 import { PromptAgent } from '../modules/PromptAgent.js';
+import { Interpreter } from '../modules/Interpreter.js'; //TEST
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
     // - doesn't reset on every render 
     // - doesn't trigger a re-render on change)
-    const [output, setOutput] = useState(`Output will be displayed here:`)
+    const [output, setOutput] = useState(`Output will be displayed here:`) // Interpreter feedback
     const [chatHistory, setChatHistory] = useState([])
-    const [task, setTask] = useState("No task yet!")
+    const [task, setTask] = useState({description: "No task yet!", id: null})
+    const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
+    const interpreter = new Interpreter(); // Creating an Interpreter object to use Interpreter methods TEST
+    
     const promptAgent = new PromptAgent(); // Creating a PromptAgent object to user PromptAgent methods
+
+    useEffect(() => {
+        // Retrieving chat history from the TutorAgent
+        const loadChat = async () => {
+            const chat = await tutorAgent.getUserChat();
+            // Formatting chat history because they are not saved with html formatting
+            chat.forEach((chatItem) => {
+                if (chatItem.role === 'assistant') {
+                    chatItem.content = promptAgent.formatTutorFeedback(chatItem.content);
+                }
+            });
+            setChatHistory(chat);
+        };
+        loadChat();
+    }, []);
 
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
@@ -32,19 +51,20 @@ const Practice = () => {
             // Format the code using the PromptAgent's formatCode method
             const formattedCode = await promptAgent.formatCode(code);
 
-            console.log('formattedCode:', formattedCode);
+            //console.log('formattedCode:', formattedCode);
     
             // Send the formatted code to the tutor agent for further processing
-            // const response = await tutorAgent.requestResponse(formattedCode);
-    
-            // Update the output with the response from the tutor agent
-            setOutput(formattedCode);
+            // NOTE: This is where the request to the Tutor Agent is made
+            //       Tutor Agent will call the Validator Agent to validate and interpret the code (using the interpreter)
+            //        Validator Agent will return the validator's feedback and the interpreter's feedback
+            const response = await tutorAgent.submitCode(formattedCode, task);
+            setOutput(response);
+
         } catch (error) {
             console.error('Error handling code submission:', error);
             // Handle errors here, such as displaying an error message to the user
         }
     };
-    
     
     // Handles prompt submission, will call prompt agent to get response
     // Prompt agent will take prompt, filter prompt, and use it to get a response from the tutor agent
@@ -56,7 +76,7 @@ const Practice = () => {
             // Add user prompt to chat history
             setChatHistory(prevChatHistory => [
                 ...prevChatHistory, 
-                {content: prompt, type: 'user'}
+                {role: 'user', content: prompt}
             ]);
             
             // NOTE: This is where the request to the Prompt Agent is made
@@ -69,11 +89,11 @@ const Practice = () => {
             // Add tutor response to chat history
             setChatHistory(prevChatHistory => [
                 ...prevChatHistory, 
-                {content: formattedFeedback, type: 'tutor'}
+                {role: 'tutor', content: formattedFeedback}
             ]);
 
             // Testing output
-            console.log('formattedFeedback:', formattedFeedback);
+            //console.log('formattedFeedback:', formattedFeedback);
         } catch (error) {
             console.error('Error handling prompt submission:', error);
             // Handle errors here, such as displaying an error message to the user
@@ -85,7 +105,8 @@ const Practice = () => {
     const getTask = async () => {
         try {
             const task = await tutorAgent.getTask();
-            setTask(task);
+            const taskObj = {description: task.content, id: task.id}
+            setTask(taskObj);
         } catch (error) {
             console.error('Error getting task:', error);
         }
@@ -109,7 +130,7 @@ const Practice = () => {
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit} />
-            <Output output={output} task={task} getTask={getTask} />
+            <Output output={output} task={task.description} getTask={getTask} />
         </div>
     );
 }

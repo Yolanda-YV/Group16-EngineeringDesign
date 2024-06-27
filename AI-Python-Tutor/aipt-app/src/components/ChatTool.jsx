@@ -7,7 +7,7 @@ const ChatTool = ({handleSubmit, handlePromptChange, chats}) => {
             <div className='chat-space'>
                 {chats ? (
                     chats.map((chat, index) => (
-                        <p key={index} className={`chat-message ${chat.type}-chat`}>{parse(chat.content)}</p>
+                        <p key={index} className={`chat-message ${chat.role}-chat`}>{parse(chat.content)}</p>
                     ))
                 ) : null}
             </div>

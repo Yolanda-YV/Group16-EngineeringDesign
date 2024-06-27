@@ -14,17 +14,22 @@ const SignUp = () => {
         const { data, error } = await supabase.auth.signUp({
             email: email,
             password: password,
-            options: {
-                data: {
-                    display_name: username,
-                }
-            }
         });
         if (error) {
             console.error("ERROR", error)
         } else {
             // Navigate to the root page
-            navigate('/');
+            const { error } = await supabase.from('UserInfo').insert({
+                user_id: data.user.id,
+                level: "Beginner",
+                username: username,
+            });
+            if (error) {
+                console.error('Error saving user info:', error);
+            } else {
+                console.log("Signed up!")
+                navigate('/');
+            }
         }
     }
     // NOTE: naviate(-1) is equivalent to clicking the back button, since signin page may be the root page
