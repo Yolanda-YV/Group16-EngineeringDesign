@@ -74,7 +74,7 @@ class TutorAgent {
                 }
             }
 
-            return output;
+            return {output: output, feedback: feedback, isCorrect: isCorrect};
         } catch (error) {
             console.error('Error handling code submission:', error);
             return `Error: ${error.message}`;
