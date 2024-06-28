@@ -83,20 +83,23 @@ class TutorAgent {
         
     }
     async getTask() {
-        // // This function will get a task from the database based on user progress/skill
-        // //  For early testing purposes, this will be random and not based on user progress
-        // const { data, error } = await supabase
-        //     .from('Tasks')
-        //     .select('id, content')
-        // if (error) {
-        //     return error;
-        // } else {
-        //     const index = Math.floor(Math.random() * (data.length - 1) + 1);
-        //     return data[index];
-        // }
-        const newTask = await this.generateNewTask(1);
-        console.log(newTask)
-        return newTask;
+        // This function will get a task from the database based on user progress/skill
+        //  For early testing purposes, this will be random and not based on user progress
+        const { data, error } = await supabase
+            .from('Tasks')
+            .select('id, content')
+        if (error) {
+            return error;
+        } else {
+            const index = Math.floor(Math.random() * (data.length - 1) + 1);
+            return data[index];
+        }
+
+        // Testing generateNewTask, has to be given a topic ID
+        // When adding it to modified getTask(), can use this code
+        // const newTask = await this.generateNewTask(1);
+        // console.log(newTask)
+        // return newTask;
     }
 
     // Database functions
@@ -178,36 +181,31 @@ class TutorAgent {
             const { data: tasks, error: taskError } = await supabase.from('Tasks').select(`content, level_id, topic_id ( name )`).eq('topic_id', topicID).limit(5);
             if (taskError) {
                 throw taskError;
+            } else {
+                // Putting chat history and new prompt together
+                const send_data = {example_tasks: tasks, current_topic: tasks[0].topic_id.name}
+
+                // Make a request to the Response serverless function
+                const response = await fetch("/.netlify/functions/GenNewTask", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(send_data),
+                });
+                const completion = await response.text();
+
+                // Code to save the new task to the database, but doesn't work well with the current setup
+                const { data, error } = await supabase
+                    .from('Tasks')
+                    .insert(
+                        {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
+                    .select('id, content')
+                    .single();
+                if (error) {
+                    throw error;
+                }
+                
+                return {id: data.id, content: completion};
             }
-            // const { data: topic, error: topicError } = await supabase.from('Topics').select('name, level_id').eq('id', topicID);
-            // if (topicError) {
-            //     throw topicError;
-            // }
-
-            // Putting chat history and new prompt together
-            const send_data = {example_tasks: tasks, current_topic: tasks[0].topic_id.name}
-
-            // Make a request to the Response serverless function
-            const response = await fetch("/.netlify/functions/GenNewTask", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(send_data),
-            });
-            const completion = await response.text();
-
-            // Code to save the new task to the database, but doesn't work well with the current setup
-            // const { data, error: taskError2 } = await supabase
-            //     .from('Tasks')
-            //     .insert(
-            //         {level_id: tasks[0].level_id, topic_id: topicID, content: completion}
-            //     );
-            // if (data) {
-            //     console.log(newTask);
-            //     console.log(send_data);
-            // } else if (taskError2) {
-            //     throw taskError2;
-            // }
-            return {id: null, content: completion};
         } catch (error) {
             console.error('Error generating new task:', error);
         }

@@ -16,7 +16,7 @@ export default async (event, context) => {
 
     let exampleTasks = [];
     for (let i = 0; i < dataObj.example_tasks.length; i++) {
-        exampleTasks.push({role: "user", content: `Example Task ${i + 1}: ${dataObj.example_tasks[i].content}`});
+        exampleTasks.push({role: "system", content: `Example Task ${i + 1}: ${dataObj.example_tasks[i].content}`});
     }
 
     // token limit for gpt3.5-turbo is 4096 tokens
@@ -25,7 +25,7 @@ export default async (event, context) => {
         messages: [
             {role: "system", content: "You are a Python programming task generator that creates a new task for a user to practice Python programming. You will use the given list of example tasks and the given topic name to create a new task for the user to complete. Using the example tasks and topic name, you should aim to generate a task that would challenge the user but should not require knowledge of topics outside the given topic name. You do not need to preface the task with 'Task:'."}, 
             ...exampleTasks,
-            {role: "user", content: `Topic Name: ${dataObj.current_topic}`}],
+            {role: "system", content: `Topic Name: ${dataObj.current_topic}`}],
         model: "gpt-3.5-turbo",
     });
     return new Response(completion.choices[0].message.content, {status: 200,  statusText: "OK"});
