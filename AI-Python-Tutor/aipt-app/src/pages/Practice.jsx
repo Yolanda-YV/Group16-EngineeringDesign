@@ -58,7 +58,7 @@ const Practice = () => {
             //       Tutor Agent will call the Validator Agent to validate and interpret the code (using the interpreter)
             //        Validator Agent will return the validator's feedback and the interpreter's feedback
             const response = await tutorAgent.submitCode(formattedCode, task);
-            setOutput(response);
+            setOutput(response.output);
 
         } catch (error) {
             console.error('Error handling code submission:', error);
