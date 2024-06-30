@@ -18,11 +18,12 @@
     "html-react-parser": "^5.1.10",
     "llamaai": "^1.0.4",
     "netlify": "^13.1.18",
-    "openai": "^4.51.0",
+    "openai": "^4.52.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.23.0"
+    "react-router-dom": "^6.23.0",
+    "react-spinners": "^0.14.1"
   },
   "devDependencies": {
     "@prettier/plugin-python": "^0.0.0-development",
