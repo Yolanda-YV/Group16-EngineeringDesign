@@ -50,6 +50,7 @@ class TutorAgent {
             // Boolean to check if code is correct
             const isCorrect = true; // This will be replaced by the validator response
             const feedback = 'Good job!'; // This will be replaced by the validator response
+            const hint = 'Check your syntax and try again.'
 
             await this.interpreter.initPyodide();
             const output = await this.interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
@@ -74,7 +75,7 @@ class TutorAgent {
                 }
             }
 
-            return {output: output, feedback: feedback, isCorrect: isCorrect};
+            return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
         } catch (error) {
             console.error('Error handling code submission:', error);
             return `Error: ${error.message}`;
