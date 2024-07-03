@@ -47,11 +47,13 @@ const Practice = () => {
         try {
             // Get the code from the ref
             const code = codeValueRef.current;
+
+            console.log('code:', code);
     
             // Format the code using the PromptAgent's formatCode method
             const formattedCode = await promptAgent.formatCode(code);
 
-            //console.log('formattedCode:', formattedCode);
+            console.log('formattedCode:', formattedCode);
     
             // Send the formatted code to the tutor agent for further processing
             // NOTE: This is where the request to the Tutor Agent is made
