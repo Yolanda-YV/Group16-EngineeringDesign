@@ -8,7 +8,7 @@ env.allowLocalModels = false;
 import { Interpreter } from './Interpreter.js';
 
 // Allocate pipeline
-const generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
+//const generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
 
 // TutorAgent makes an API call to the Response serverless function to request a response from OPENAI
 class TutorAgent {
@@ -18,6 +18,7 @@ class TutorAgent {
     }
     async generateEmbed() {
         this.generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
+        console.log(this.generateEmbedding)
     }
     async requestResponse(prompt) {
         // This function will call the Response serverless function to get a response from OPENAI
@@ -157,7 +158,7 @@ class TutorAgent {
     }
     async saveUserChat(role, content) {
         // Generating embedding for content
-        const output = await generateEmbedding(content, {
+        const output = await this.generateEmbedding(content, {
             pooling: 'mean',
             normalize: true,
         });
