@@ -70,6 +70,8 @@ const Practice = () => {
     // Prompt agent will take prompt, filter prompt, and use it to get a response from the tutor agent
     const handlePromptSubmit = async (e) => {
         e.preventDefault()
+        const textarea = e.target.querySelector('textarea')
+        
         try {
             const prompt = promptValueRef.current;
     
@@ -78,7 +80,8 @@ const Practice = () => {
                 ...prevChatHistory, 
                 {role: 'user', content: prompt}
             ]);
-            
+            textarea.value = '' // Clear the textarea
+
             // NOTE: This is where the request to the Prompt Agent is made
             //       For testing purposes, using the Tutor Agent directly
             const response = await promptAgent.processUserInput(prompt, 'prompt');
@@ -92,8 +95,6 @@ const Practice = () => {
                 {role: 'tutor', content: formattedFeedback}
             ]);
 
-            // Testing output
-            //console.log('formattedFeedback:', formattedFeedback);
         } catch (error) {
             console.error('Error handling prompt submission:', error);
             // Handle errors here, such as displaying an error message to the user
@@ -117,8 +118,12 @@ const Practice = () => {
         codeValueRef.current = value
     }
     const handlePromptChange = (event) => {
+        let textarea = event.target
         let value = event.target.value
         promptValueRef.current = value
+        textarea.style.height = '2rem'
+        const { scrollHeight } = textarea
+        textarea.style.height = `${scrollHeight}px`
     }
 
     return (
