@@ -30,6 +30,13 @@
     align-items: center;
     margin: 15%;
 }
+.chat-loader-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+
+    margin: 0%;
+}
 .expand-condense-img {
     background-color: #EEEEEE;
     width: 1.5rem;
