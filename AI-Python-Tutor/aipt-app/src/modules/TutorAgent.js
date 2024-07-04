@@ -48,7 +48,7 @@ class TutorAgent {
             //  with made up valaidator response
             
             // Boolean to check if code is correct
-            const isCorrect = true; // This will be replaced by the validator response
+            const isCorrect = false; // This will be replaced by the validator response //testing it for the hint
             const feedback = 'Good job!'; // This will be replaced by the validator response
             const hint = 'Check your syntax and try again.'
 
