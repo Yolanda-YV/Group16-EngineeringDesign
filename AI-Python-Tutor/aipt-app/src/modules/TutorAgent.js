@@ -14,6 +14,10 @@ const generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-sma
 class TutorAgent {
     constructor() {
         this.interpreter = new Interpreter();
+        this.generateEmbed();
+    }
+    async generateEmbed() {
+        this.generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
     }
     async requestResponse(prompt) {
         // This function will call the Response serverless function to get a response from OPENAI
@@ -126,7 +130,7 @@ class TutorAgent {
     }
     async getRelevantChat (prompt) {
         // Generating embedding for content
-        const output = await generateEmbedding(prompt, {
+        const output = await this.generateEmbedding(prompt, {
             pooling: 'mean',
             normalize: true,
         });
