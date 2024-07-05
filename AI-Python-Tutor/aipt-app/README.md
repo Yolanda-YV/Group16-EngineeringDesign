@@ -22,7 +22,7 @@ npm install
 
 3. Start & build in your dev server.
 ```
-# To install netlify
+# To install/update netlify
 npm install netlify-cli -g
 
 # Start your local server
