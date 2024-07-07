@@ -13,7 +13,7 @@ export default async (event, context) => {
 
     // parse the JSON string to an object
     const dataObj = JSON.parse(dataStr);
-
+ 
     let exampleTasks = [];
     for (let i = 0; i < dataObj.example_tasks.length; i++) {
         exampleTasks.push({role: "system", content: `Example Task ${i + 1}: ${dataObj.example_tasks[i].content}`});

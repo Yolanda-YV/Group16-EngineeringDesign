@@ -107,7 +107,7 @@ class PromptAgent {
             //  The original code would turn (`) into (<code>) which would mess with the formatting
             feedback = feedback.replace(/`{3}(.*?)`{3}/g, '<code>$1</code>');
             feedback = feedback.replace(/(?=)(python)/g, '<div>$1</div>'); // To modify the python header
-            feedback = feedback.replace(/`{1}(.*?)`{1}/g, '<code>$1</code>');
+            feedback = feedback.replace(/`{1}(.*?)`{1}/g, '<code>$1</code>');   
 
             return feedback;
         } catch (error) {
@@ -121,6 +121,8 @@ class PromptAgent {
         try {
             // Format the validator feedback for display in the web application
             // Add your formatting logic here
+            feedback = feedback.replace(/\n/g, '<br>');
+            feedback = feedback.replace(/`{3}(.*?)`{3}/g, '<code>$1</code>');
             return feedback;
         } catch (error) {
             console.error('Error formatting validator feedback:', error);
