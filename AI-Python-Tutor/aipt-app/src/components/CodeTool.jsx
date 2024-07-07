@@ -72,8 +72,6 @@ import '../index.css';
 
 
 
-
-
 // NOTE: Editor height is 100vh - 90px (Navbar) - 50px (Submit button) - 4.5rem (Gaps and Padding)
 const CodeTool = ({handleEditorChange, handleSubmit}) => {
     return (
@@ -85,7 +83,7 @@ const CodeTool = ({handleEditorChange, handleSubmit}) => {
                 defaultLanguage='python'
                 defaultValue='# Write your code here'
                 onChange={handleEditorChange}></Editor>
-            <button className='submit-btn' type='submit'>Submit</button>
+            <button className='submit-btn' type='submit'>Run</button>
         </form>
     );
 }
