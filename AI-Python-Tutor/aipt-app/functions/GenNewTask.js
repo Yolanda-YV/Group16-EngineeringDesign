@@ -23,7 +23,13 @@ export default async (event, context) => {
     // make a request to the OpenAI API
     const completion = await openai.chat.completions.create({
         messages: [
-            {role: "system", content: "You are a Python programming task generator that creates a new task for a user to practice Python programming. You will use the given list of example tasks and the given topic name to create a new task for the user to complete. Using the example tasks and topic name, you should aim to generate a task that would challenge the user but should not require knowledge of topics outside the given topic name. You do not need to preface the task with 'Task:'."}, 
+            {role: "system", content: "You are a Python programming task generator that creates a new exercise for a user to practice Python programming."},
+            {role: "system", content: "You will use the given list of example exercises and the given topic name to create a new exercise for the user to complete."},
+            {role: "system", content: "You should aim to generate a exercise that would challenge the user but should not require knowledge of topics outside the given topic name."}, 
+            {role: "system", content: "You do not need to preface the exercise with 'Exercise:' or 'Task:'."},
+            {role: "system", content: "Model the exercise after the example exercises provided, but ensure that the exercise is unique and not a direct copy of any of the example exercises."},
+            {role: "system", content: "Example exercises will be marked by 'Example Task 1:', 'Example Task 2:', etc. and the topic will be marked by 'Topic Name:'."},
+            {role: "system", content: "These exercises will not tell the user to generate or create an excercise or task, they will tell the user to create a program or code that does something."},
             ...exampleTasks,
             {role: "system", content: `Topic Name: ${dataObj.current_topic}`}],
         model: "gpt-3.5-turbo",

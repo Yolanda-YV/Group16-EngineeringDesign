@@ -36,6 +36,12 @@
     justify-content: start;
     margin: 0%;
 }
+.task-loader-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 1rem;
+}
 .expand-condense-img {
     background-color: #EEEEEE;
     width: 1.5rem;

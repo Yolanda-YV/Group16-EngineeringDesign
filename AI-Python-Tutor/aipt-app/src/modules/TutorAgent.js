@@ -18,7 +18,6 @@ class TutorAgent {
     }
     async generateEmbed() {
         this.generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
-        console.log(this.generateEmbedding)
     }
     async requestResponse(prompt) {
         // This function will call the Response serverless function to get a response from OPENAI
@@ -88,24 +87,52 @@ class TutorAgent {
 
         
     }
-    async getTask() {
+    async getTask(topicID) {
         // This function will get a task from the database based on user progress/skill
-        //  For early testing purposes, this will be random and not based on user progress
-        const { data, error } = await supabase
-            .from('Tasks')
-            .select('id, content')
-        if (error) {
+        try {
+            const { data:{user} } = await supabase.auth.getUser();
+            if (topicID) {
+                // Specific topic selected
+                const { error, data } = await supabase.rpc("get_task", {
+                    u_id: user.id,
+                    selected_topic: topicID});
+                if (error) {
+                    throw error
+                } else {
+                    return data[0];
+                }
+            } else {
+                // No specific topic selected
+                const { error, data } = await supabase.rpc("get_task", {
+                    u_id: user.id});
+                if (error) {
+                    throw error
+                } else if (data.length > 0) {
+                    // Task that is not completed by user, is in user's level
+                    console.log('data:', data);
+                    return data[0];
+                } else {
+                    // No task that is not completed by user and in user's level, 
+                    //  means user has completed all tasks in their level, but has not scored high enough on all topics
+                    //  So, creating a new task for the user in the first incomplete topic in their level
+                    const { error, data } = await supabase.rpc("calculate_all_average_scores", {
+                        u_id: user.id
+                    });
+                    if (error) {
+                        throw error;
+                    } else {
+                        const filteredData = data
+                            .filter((topic) => topic.task_average < 83)
+                            .sort((a, b) => a.topic_id - b.topic_id);
+                        const newTask = await this.generateNewTask(filteredData[0].topic_id);
+                        return newTask;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error getting task:', error);
             return error;
-        } else {
-            const index = Math.floor(Math.random() * (data.length - 1) + 1);
-            return data[index];
         }
-
-        // Testing generateNewTask, has to be given a topic ID
-        // When adding it to modified getTask(), can use this code
-        // const newTask = await this.generateNewTask(1);
-        // console.log(newTask)
-        // return newTask;
     }
 
     // Database functions
@@ -199,16 +226,18 @@ class TutorAgent {
                 });
                 const completion = await response.text();
 
-                // Code to save the new task to the database, but doesn't work well with the current setup
-                const { data, error } = await supabase
-                    .from('Tasks')
-                    .insert(
-                        {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
-                    .select('id, content')
-                    .single();
-                if (error) {
-                    throw error;
-                }
+                // COMMENTING THIS FOR TESTING PURPOSES, GENERATION NEEDS WORK BEFORE SAVING
+                // // Code to save the new task to the database, but doesn't work well with the current setup
+                // const { data, error } = await supabase
+                //     .from('Tasks')
+                //     .insert(
+                //         {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
+                //     .select('id, content')
+                //     .single();
+                // if (error) {
+                //     throw error;
+                // }
+                const data = {id: 100, content: completion};
                 
                 return {id: data.id, content: completion};
             }

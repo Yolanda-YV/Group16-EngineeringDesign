@@ -7,7 +7,6 @@ import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
 import { TutorAgent } from '../modules/TutorAgent.js';
 import { PromptAgent } from '../modules/PromptAgent.js';
-import { Interpreter } from '../modules/Interpreter.js'; //TEST
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
@@ -17,11 +16,11 @@ const Practice = () => {
     const [chatHistory, setChatHistory] = useState([])
     const [task, setTask] = useState({description: "No task yet!", id: null})
     const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
+    const [taskLoading, setTaskLoading] = useState(false) // Loading state for task retrieval
+    const [chatHistoryLoading, setChatHistoryLoading] = useState(true) // Loading state for chat history retrieval
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
-    const interpreter = new Interpreter(); // Creating an Interpreter object to use Interpreter methods TEST
-    
     const promptAgent = new PromptAgent(); // Creating a PromptAgent object to user PromptAgent methods
 
     useEffect(() => {
@@ -35,6 +34,7 @@ const Practice = () => {
                 }
             });
             setChatHistory(chat);
+            setChatHistoryLoading(false);
         };
         loadChat();
     }, []);
@@ -104,10 +104,14 @@ const Practice = () => {
     // Handles task retrieval, will call tutor agent to get a response
     // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
     const getTask = async () => {
+        // Fetching task, task loading true
+        setTaskLoading(true);
         try {
             const task = await tutorAgent.getTask();
             const taskObj = {description: task.content, id: task.id}
             setTask(taskObj);
+            // Task fetched and set, task loading false
+            setTaskLoading(false);
         } catch (error) {
             console.error('Error getting task:', error);
         }
@@ -131,11 +135,16 @@ const Practice = () => {
             <ChatTool
                 handlePromptChange={handlePromptChange}
                 handleSubmit={handlePromptSubmit}
-                chats={chatHistory} />
+                chats={chatHistory}
+                chatLoading={chatHistoryLoading} />
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit} />
-            <Output output={output} task={task.description} getTask={getTask} />
+            <Output 
+                output={output} 
+                task={task.description} 
+                getTask={getTask}
+                loading={taskLoading} />
         </div>
     );
 }
