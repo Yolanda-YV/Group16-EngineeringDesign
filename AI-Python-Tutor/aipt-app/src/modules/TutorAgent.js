@@ -47,10 +47,7 @@ class TutorAgent {
         //   The code will be sent as a string to the ValidatorAgent
         //   The ValidatorAgent will return a response and output
         try {
-            // Validator should be called here, with the code and task, but since it's not implemented, calling Interpreter here
-            //  with made up valaidator response
-            
-            // Boolean to check if code is correct
+            // Hardcoded values to use until validator response can be used
             const isCorrect = false; // This will be replaced by the validator response //testing it for the hint
             const feedback = 'Good job!'; // This will be replaced by the validator response
             const hint = 'Check your syntax and try again.'
@@ -61,7 +58,7 @@ class TutorAgent {
             
             const validation = await this.validator.validateCode(code, task.description, output); // TEST VALIDATOR
 
-            // COMMENTING THIS FOR TESTING PURPOSES
+            // COMMENTING THIS FOR TESTING PURPOSES, NO SAVING TO DB UNTIL VALIDATOR RESPONSE CAN BE USED
             // // Checking if this is an in-progress task or not
             // const { data:{user} } = await supabase.auth.getUser(); // Getting user
 
@@ -80,13 +77,16 @@ class TutorAgent {
             //         console.log('Successfully updated score');
             //     }
             // }
+
+            // Validator object exists, but cannot access the feedback, hint, and isCorrect values shown in console
             const allData = {
                 output: output, 
                 feedback: validation.feedback, 
                 hint: validation.hint, 
                 isCorrect: validation.isCorrect}
             console.log(allData)
-            return allData;
+            
+            return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
         } catch (error) {
             console.error('Error handling code submission:', error);
             return `Error: ${error.message}`;

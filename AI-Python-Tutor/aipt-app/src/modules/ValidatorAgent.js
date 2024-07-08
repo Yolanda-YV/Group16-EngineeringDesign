@@ -15,6 +15,7 @@ class ValidatorAgent {
         });
         const completion = await response.json();
 
+        // Information can be seen in the console, but can't access it (returns undefined)
         console.log(completion);
 
         return completion;
