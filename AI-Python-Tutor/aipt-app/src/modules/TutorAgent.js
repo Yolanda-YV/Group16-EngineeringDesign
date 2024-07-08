@@ -6,14 +6,13 @@ env.allowLocalModels = false;
 //env.useBrowserCache = false;
 
 import { Interpreter } from './Interpreter.js';
-
-// Allocate pipeline
-//const generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
+import { ValidatorAgent } from './ValidatorAgent.js';
 
 // TutorAgent makes an API call to the Response serverless function to request a response from OPENAI
 class TutorAgent {
     constructor() {
         this.interpreter = new Interpreter();
+        this.validator = new ValidatorAgent();
         this.generateEmbed();
     }
     async generateEmbed() {
@@ -59,25 +58,28 @@ class TutorAgent {
             await this.interpreter.initPyodide();
             const output = await this.interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
             console.log(output) // Testing output format --- Like code from AI tutor, this needs to be formatted too
+            
+            this.validator.validateCode(code, task.description, output); // TEST VALIDATOR
 
+            // COMMENTING THIS FOR TESTING PURPOSES
             // // Checking if this is an in-progress task or not
-            const { data:{user} } = await supabase.auth.getUser(); // Getting user
+            // const { data:{user} } = await supabase.auth.getUser(); // Getting user
 
-            // If task exists, update the score, otherwise don't
-            if (task.id) {
-                // Testing DB function update_score()
-                const { data, error } = await supabase.rpc("update_score", {
-                    u_id: user.id,
-                    t_id: task.id,
-                    is_correct: isCorrect,
-                    val_response: feedback
-                });
-                if (error) {
-                    console.error('Error updating score:', error);
-                } else {
-                    console.log('Successfully updated score');
-                }
-            }
+            // // If task exists, update the score, otherwise don't
+            // if (task.id) {
+            //     // Testing DB function update_score()
+            //     const { data, error } = await supabase.rpc("update_score", {
+            //         u_id: user.id,
+            //         t_id: task.id,
+            //         is_correct: isCorrect,
+            //         val_response: feedback
+            //     });
+            //     if (error) {
+            //         console.error('Error updating score:', error);
+            //     } else {
+            //         console.log('Successfully updated score');
+            //     }
+            // }
 
             return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
         } catch (error) {
