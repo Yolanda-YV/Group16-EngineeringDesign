@@ -65,24 +65,16 @@ class PromptAgent {
             const lines = code.split('\n');
     
             // Remove leading and trailing whitespace from each line
-            const trimmedLines = lines.map(line => line.trim());
+            const trimmedLines = lines.map(line => line.trimEnd());
     
             // Remove empty lines
             const nonEmptyLines = trimmedLines.filter(line => line !== '');
     
-            // Add indentation based on the Python indentation rules
-            const indentedLines = nonEmptyLines.map((line, index) => {
-                // Calculate the indentation level based on the number of preceding whitespace characters
-                const indentationLevel = line.search(/\S|$/);
-                // Indent all lines except the first line
-                return index === 0 ? line : ' '.repeat(indentationLevel) + line;
-            });
-    
-            // Join the lines back together with newline characters
-            let formattedCode = indentedLines.join('\n');
+            // Reconstruct the code with the original indentation preserved
+            let formattedCode = nonEmptyLines.join('\n');
     
             // Remove extra spaces around operators
-            formattedCode = formattedCode.replace(/\s*([+-/*=])\s*/g, ' $1 ');
+            formattedCode = formattedCode.replace(/\s*([+\-/*=])\s*/g, ' $1 ');
     
             return formattedCode;
         } catch (error) {

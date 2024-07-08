@@ -6,7 +6,6 @@ class ValidatorAgent {
     async validateCode(code, task, output) {
 
         const data = {code: code, task: task, output: output};
-        console.log(data);
 
         // Make a request to the validate serverless function
         const response = await fetch("/.netlify/functions/validate", {
@@ -14,8 +13,11 @@ class ValidatorAgent {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         });
-        const completion = await response.text();
+        const completion = await response.json();
+
         console.log(completion);
+
+        return completion;
     }
 
     formatFeedback(feedback) {

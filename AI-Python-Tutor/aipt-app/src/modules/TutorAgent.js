@@ -51,7 +51,7 @@ class TutorAgent {
             //  with made up valaidator response
             
             // Boolean to check if code is correct
-            const isCorrect = true; // This will be replaced by the validator response
+            const isCorrect = false; // This will be replaced by the validator response //testing it for the hint
             const feedback = 'Good job!'; // This will be replaced by the validator response
             const hint = 'Check your syntax and try again.'
 
@@ -59,7 +59,7 @@ class TutorAgent {
             const output = await this.interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
             console.log(output) // Testing output format --- Like code from AI tutor, this needs to be formatted too
             
-            this.validator.validateCode(code, task.description, output); // TEST VALIDATOR
+            const validation = await this.validator.validateCode(code, task.description, output); // TEST VALIDATOR
 
             // COMMENTING THIS FOR TESTING PURPOSES
             // // Checking if this is an in-progress task or not
@@ -80,8 +80,13 @@ class TutorAgent {
             //         console.log('Successfully updated score');
             //     }
             // }
-
-            return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
+            const allData = {
+                output: output, 
+                feedback: validation.feedback, 
+                hint: validation.hint, 
+                isCorrect: validation.isCorrect}
+            console.log(allData)
+            return allData;
         } catch (error) {
             console.error('Error handling code submission:', error);
             return `Error: ${error.message}`;

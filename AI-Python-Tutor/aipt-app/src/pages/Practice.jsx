@@ -13,6 +13,9 @@ const Practice = () => {
     // - doesn't reset on every render 
     // - doesn't trigger a re-render on change)
     const [output, setOutput] = useState(`Output will be displayed here:`) // Interpreter feedback
+    const [hint, setHint] = useState('') // Validator hint
+    
+    const [isCorrect, setIsCorrect] = useState(null) // Validator boolean
     const [chatHistory, setChatHistory] = useState([])
     const [task, setTask] = useState({description: "No task yet!", id: null})
     const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
@@ -47,22 +50,31 @@ const Practice = () => {
         try {
             // Get the code from the ref
             const code = codeValueRef.current;
+
+            console.log('code:', code);
     
             // Format the code using the PromptAgent's formatCode method
             const formattedCode = await promptAgent.formatCode(code);
 
-            //console.log('formattedCode:', formattedCode);
+            console.log('formattedCode:', formattedCode);
     
             // Send the formatted code to the tutor agent for further processing
             // NOTE: This is where the request to the Tutor Agent is made
             //       Tutor Agent will call the Validator Agent to validate and interpret the code (using the interpreter)
             //        Validator Agent will return the validator's feedback and the interpreter's feedback
             const response = await tutorAgent.submitCode(formattedCode, task);
+
             setOutput(response.output);
+            setCodeFeedback(response.feedback);
+            setHint(response.hint);
+            setIsCorrect(response.isCorrect);
 
         } catch (error) {
             console.error('Error handling code submission:', error);
-            // Handle errors here, such as displaying an error message to the user
+            setOutput('An error occurred while processing your submission.');
+            setCodeFeedback('');
+            setHint('');
+            setIsCorrect(false);
         }
     };
     
@@ -144,7 +156,10 @@ const Practice = () => {
                 output={output} 
                 task={task.description} 
                 getTask={getTask}
-                loading={taskLoading} />
+                loading={taskLoading}
+                feedback={codeFeedback}
+                hint={hint}
+                isCorrect={isCorrect} />
         </div>
     );
 }
