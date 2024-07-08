@@ -14,7 +14,7 @@ export default async (event, context) => {
         // Make a request to the OpenAI API to check if the input is related to Python
         const completion = await openai.chat.completions.create({
             messages: [
-                { role: "system", content: `Determine if the following input is related to Python programming. Respond with 'true' if it is related to Python, and 'false' if it is not.` },
+                { role: "system", content: `Determine if the following input is related to Python programming. Respond with 'true' if it is related to Python, and 'false' if it is not. For ambiguous prompts like 'can you give me another example?' or 'explain classes' that do not explicitly mention Python but may refer to conversation history or Python topics, respond with 'true'.` },
                 { role: "user", content: `${prompt}` }
             ],
             model: "gpt-3.5-turbo",

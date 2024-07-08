@@ -36,6 +36,12 @@
     justify-content: start;
     margin: 0%;
 }
+.task-loader-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 1rem;
+}
 .expand-condense-img {
     background-color: #EEEEEE;
     width: 1.5rem;
@@ -148,6 +154,7 @@
     padding: 1rem;
     margin: 1rem;
     gap: 0.5rem;
+    position: relative;
 }
 .current-task-card {
     background-color: var(--color-surface-3);
@@ -155,6 +162,38 @@
     border-radius: 0.5rem;
     font-size: 1rem;
 }
+
+/* display hint-card */
+.hint-popup {
+    position: relative;
+    bottom: -10px; /* Adjust as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-surface-3);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+  }
+  
+  .hint-content {
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .close-hint {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--color-primary-3);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+
 /*CredForm*/
 .cred-form {
     display: flex;
