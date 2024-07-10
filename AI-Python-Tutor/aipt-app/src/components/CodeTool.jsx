@@ -82,6 +82,8 @@ const CodeTool = ({handleEditorChange, handleSubmit, hint, isCorrect}) => {
     useEffect(() => {
         if (isCorrect === false) {
             setShowHint(true);
+        } else if (isCorrect === true) {
+            setShowHint(false);
         }
     }, [isCorrect]);
 
