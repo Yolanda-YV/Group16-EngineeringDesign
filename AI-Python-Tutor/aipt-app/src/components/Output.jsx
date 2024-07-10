@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import '../index.css';
 import { ClipLoader } from 'react-spinners';
 
-const Output = ({output, task, getTask, loading, feedback, hint, isCorrect}) => {
+const Output = ({output, task, getTask, loading, feedback, isCorrect}) => {
 
     return (
         <div className='output'>
@@ -36,17 +36,6 @@ const Output = ({output, task, getTask, loading, feedback, hint, isCorrect}) => 
               <p>{isCorrect !== null ? (isCorrect ? 'Yes' : 'No') : 'Not checked yet'}</p>
             </div>
           </div>
-          {/* Display hint popup if showHint is true */}
-          {showHint && (
-                <div className='hint-popup'>
-                    <div className='hint-content'>
-                        <button className='close-hint' onClick={closeHint}>X</button>
-                        <h1>Hint</h1>
-                        <p>{hint}</p>
-                    </div>
-                </div>
-            )}
-        </div>
       );
     };
     
