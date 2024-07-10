@@ -159,8 +159,8 @@ const Practice = () => {
                 task={task.description} 
                 getTask={getTask}
                 loading={taskLoading}
-                feedback={codeFeedback}
-                isCorrect={isCorrect}/>
+                isCorrect={isCorrect}
+                feedback={codeFeedback}/>
         </div>
     );
 }
