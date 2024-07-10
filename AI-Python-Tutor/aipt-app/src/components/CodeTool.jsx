@@ -75,7 +75,21 @@ import '../index.css';
 
 
 // NOTE: Editor height is 100vh - 90px (Navbar) - 50px (Submit button) - 4.5rem (Gaps and Padding)
-const CodeTool = ({handleEditorChange, handleSubmit}) => {
+const CodeTool = ({handleEditorChange, handleSubmit, hint, isCorrect}) => {
+    const [showHint, setShowHint] = useState(false);
+
+    // Show hint when the answer is incorrect
+    useEffect(() => {
+        if (isCorrect === false) {
+            setShowHint(true);
+        }
+    }, [isCorrect]);
+
+    // Close hint popup
+    const closeHint = () => {
+        setShowHint(false);
+    };
+
     return (
         <form className='code-tool' onSubmit={handleSubmit}>
             <Editor 
@@ -86,6 +100,14 @@ const CodeTool = ({handleEditorChange, handleSubmit}) => {
                 defaultValue='# Write your code here'
                 onChange={handleEditorChange}></Editor>
             <button className='submit-btn' type='submit'>Submit</button>
+            {showHint && (
+                <div className='hint-popup'>
+                    <div className='hint-content'>
+                        <button className='close-hint' onClick={closeHint}>X</button>
+                        <p>{hint}</p>
+                    </div>
+                </div>
+            )}
         </form>
     );
 }
