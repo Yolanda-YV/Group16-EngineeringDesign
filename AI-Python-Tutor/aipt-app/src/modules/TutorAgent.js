@@ -86,7 +86,8 @@ class TutorAgent {
                 isCorrect: validation.isCorrect}
             console.log(allData)
             
-            return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
+            //return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
+            return allData;
         } catch (error) {
             console.error('Error handling code submission:', error);
             return `Error: ${error.message}`;
