@@ -20,9 +20,14 @@ const Output = ({output, task, getTask, loading, feedback, isCorrect}) => {
                 )}
                 <button className='submit-btn' onClick={getTask}>Get Task</button>
             </div>
+            <div className='card'>
             <div className='output-section'>
               <h1>Output</h1>
               <pre>{output}</pre>
+            </div>
+            <div className='isCorrect'>
+              <h1>Correct</h1>
+              <p>{isCorrect !== null ? (isCorrect ? 'Yes' : 'No') : 'Not checked yet'}</p>
             </div>
             {/* feedback shows when isCorrect is true */}
             {isCorrect === true && (
@@ -31,10 +36,7 @@ const Output = ({output, task, getTask, loading, feedback, isCorrect}) => {
               <p>{feedback}</p>
             </div>
             )}
-            <div className='isCorrect'>
-              <h1>Correct</h1>
-              <p>{isCorrect !== null ? (isCorrect ? 'Yes' : 'No') : 'Not checked yet'}</p>
-            </div>
+          </div>
           </div>
       );
     };
