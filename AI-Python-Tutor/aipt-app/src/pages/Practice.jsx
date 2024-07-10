@@ -7,7 +7,6 @@ import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
 import { TutorAgent } from '../modules/TutorAgent.js';
 import { PromptAgent } from '../modules/PromptAgent.js';
-import { Interpreter } from '../modules/Interpreter.js'; //TEST
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
@@ -20,11 +19,11 @@ const Practice = () => {
     const [chatHistory, setChatHistory] = useState([])
     const [task, setTask] = useState({description: "No task yet!", id: null})
     const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
+    const [taskLoading, setTaskLoading] = useState(false) // Loading state for task retrieval
+    const [chatHistoryLoading, setChatHistoryLoading] = useState(true) // Loading state for chat history retrieval
     const codeValueRef = useRef("")
     const promptValueRef = useRef("")
     const tutorAgent = new TutorAgent(); // Creating a TutorAgent object to user TutorAgent methods
-    const interpreter = new Interpreter(); // Creating an Interpreter object to use Interpreter methods TEST
-    
     const promptAgent = new PromptAgent(); // Creating a PromptAgent object to user PromptAgent methods
 
     useEffect(() => {
@@ -38,6 +37,7 @@ const Practice = () => {
                 }
             });
             setChatHistory(chat);
+            setChatHistoryLoading(false);
         };
         loadChat();
     }, []);
@@ -82,6 +82,8 @@ const Practice = () => {
     // Prompt agent will take prompt, filter prompt, and use it to get a response from the tutor agent
     const handlePromptSubmit = async (e) => {
         e.preventDefault()
+        const textarea = e.target.querySelector('textarea')
+        
         try {
             const prompt = promptValueRef.current;
     
@@ -90,7 +92,8 @@ const Practice = () => {
                 ...prevChatHistory, 
                 {role: 'user', content: prompt}
             ]);
-            
+            textarea.value = '' // Clear the textarea
+
             // NOTE: This is where the request to the Prompt Agent is made
             //       For testing purposes, using the Tutor Agent directly
             const response = await promptAgent.processUserInput(prompt, 'prompt');
@@ -104,8 +107,6 @@ const Practice = () => {
                 {role: 'tutor', content: formattedFeedback}
             ]);
 
-            // Testing output
-            //console.log('formattedFeedback:', formattedFeedback);
         } catch (error) {
             console.error('Error handling prompt submission:', error);
             // Handle errors here, such as displaying an error message to the user
@@ -115,10 +116,14 @@ const Practice = () => {
     // Handles task retrieval, will call tutor agent to get a response
     // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
     const getTask = async () => {
+        // Fetching task, task loading true
+        setTaskLoading(true);
         try {
             const task = await tutorAgent.getTask();
             const taskObj = {description: task.content, id: task.id}
             setTask(taskObj);
+            // Task fetched and set, task loading false
+            setTaskLoading(false);
         } catch (error) {
             console.error('Error getting task:', error);
         }
@@ -129,8 +134,12 @@ const Practice = () => {
         codeValueRef.current = value
     }
     const handlePromptChange = (event) => {
+        let textarea = event.target
         let value = event.target.value
         promptValueRef.current = value
+        textarea.style.height = '2rem'
+        const { scrollHeight } = textarea
+        textarea.style.height = `${scrollHeight}px`
     }
 
     return (
@@ -138,7 +147,8 @@ const Practice = () => {
             <ChatTool
                 handlePromptChange={handlePromptChange}
                 handleSubmit={handlePromptSubmit}
-                chats={chatHistory} />
+                chats={chatHistory}
+                chatLoading={chatHistoryLoading} />
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit}
@@ -147,7 +157,8 @@ const Practice = () => {
             <Output 
                 output={output} 
                 task={task.description} 
-                getTask={getTask} 
+                getTask={getTask}
+                loading={taskLoading}
                 feedback={codeFeedback}
                 isCorrect={isCorrect}/>
         </div>

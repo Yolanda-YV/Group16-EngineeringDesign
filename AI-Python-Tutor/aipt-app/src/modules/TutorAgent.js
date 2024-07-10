@@ -6,14 +6,17 @@ env.allowLocalModels = false;
 //env.useBrowserCache = false;
 
 import { Interpreter } from './Interpreter.js';
-
-// Allocate pipeline
-const generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
+import { ValidatorAgent } from './ValidatorAgent.js';
 
 // TutorAgent makes an API call to the Response serverless function to request a response from OPENAI
 class TutorAgent {
     constructor() {
         this.interpreter = new Interpreter();
+        this.validator = new ValidatorAgent();
+        this.generateEmbed();
+    }
+    async generateEmbed() {
+        this.generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
     }
     async requestResponse(prompt) {
         // This function will call the Response serverless function to get a response from OPENAI
@@ -44,10 +47,7 @@ class TutorAgent {
         //   The code will be sent as a string to the ValidatorAgent
         //   The ValidatorAgent will return a response and output
         try {
-            // Validator should be called here, with the code and task, but since it's not implemented, calling Interpreter here
-            //  with made up valaidator response
-            
-            // Boolean to check if code is correct
+            // Hardcoded values to use until validator response can be used
             const isCorrect = false; // This will be replaced by the validator response //testing it for the hint
             const feedback = 'Good job!'; // This will be replaced by the validator response
             const hint = 'Check your syntax and try again.'
@@ -55,27 +55,39 @@ class TutorAgent {
             await this.interpreter.initPyodide();
             const output = await this.interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
             console.log(output) // Testing output format --- Like code from AI tutor, this needs to be formatted too
+            
+            const validation = await this.validator.validateCode(code, task.description, output); // TEST VALIDATOR
 
+            // COMMENTING THIS FOR TESTING PURPOSES, NO SAVING TO DB UNTIL VALIDATOR RESPONSE CAN BE USED
             // // Checking if this is an in-progress task or not
-            const { data:{user} } = await supabase.auth.getUser(); // Getting user
+            // const { data:{user} } = await supabase.auth.getUser(); // Getting user
 
-            // If task exists, update the score, otherwise don't
-            if (task.id) {
-                // Testing DB function update_score()
-                const { data, error } = await supabase.rpc("update_score", {
-                    u_id: user.id,
-                    t_id: task.id,
-                    is_correct: isCorrect,
-                    val_response: feedback
-                });
-                if (error) {
-                    console.error('Error updating score:', error);
-                } else {
-                    console.log('Successfully updated score');
-                }
-            }
+            // // If task exists, update the score, otherwise don't
+            // if (task.id) {
+            //     // Testing DB function update_score()
+            //     const { data, error } = await supabase.rpc("update_score", {
+            //         u_id: user.id,
+            //         t_id: task.id,
+            //         is_correct: isCorrect,
+            //         val_response: feedback
+            //     });
+            //     if (error) {
+            //         console.error('Error updating score:', error);
+            //     } else {
+            //         console.log('Successfully updated score');
+            //     }
+            // }
 
-            return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
+            // Validator object exists, but cannot access the feedback, hint, and isCorrect values shown in console
+            const allData = {
+                output: output, 
+                feedback: validation.feedback, 
+                hint: validation.hint, 
+                isCorrect: validation.isCorrect}
+            console.log(allData)
+            
+            //return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
+            return allData;
         } catch (error) {
             console.error('Error handling code submission:', error);
             return `Error: ${error.message}`;
@@ -83,24 +95,52 @@ class TutorAgent {
 
         
     }
-    async getTask() {
+    async getTask(topicID) {
         // This function will get a task from the database based on user progress/skill
-        //  For early testing purposes, this will be random and not based on user progress
-        const { data, error } = await supabase
-            .from('Tasks')
-            .select('id, content')
-        if (error) {
+        try {
+            const { data:{user} } = await supabase.auth.getUser();
+            if (topicID) {
+                // Specific topic selected
+                const { error, data } = await supabase.rpc("get_task", {
+                    u_id: user.id,
+                    selected_topic: topicID});
+                if (error) {
+                    throw error
+                } else {
+                    return data[0];
+                }
+            } else {
+                // No specific topic selected
+                const { error, data } = await supabase.rpc("get_task", {
+                    u_id: user.id});
+                if (error) {
+                    throw error
+                } else if (data.length > 0) {
+                    // Task that is not completed by user, is in user's level
+                    console.log('data:', data);
+                    return data[0];
+                } else {
+                    // No task that is not completed by user and in user's level, 
+                    //  means user has completed all tasks in their level, but has not scored high enough on all topics
+                    //  So, creating a new task for the user in the first incomplete topic in their level
+                    const { error, data } = await supabase.rpc("calculate_all_average_scores", {
+                        u_id: user.id
+                    });
+                    if (error) {
+                        throw error;
+                    } else {
+                        const filteredData = data
+                            .filter((topic) => topic.task_average < 83)
+                            .sort((a, b) => a.topic_id - b.topic_id);
+                        const newTask = await this.generateNewTask(filteredData[0].topic_id);
+                        return newTask;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error getting task:', error);
             return error;
-        } else {
-            const index = Math.floor(Math.random() * (data.length - 1) + 1);
-            return data[index];
         }
-
-        // Testing generateNewTask, has to be given a topic ID
-        // When adding it to modified getTask(), can use this code
-        // const newTask = await this.generateNewTask(1);
-        // console.log(newTask)
-        // return newTask;
     }
 
     // Database functions
@@ -126,7 +166,7 @@ class TutorAgent {
     }
     async getRelevantChat (prompt) {
         // Generating embedding for content
-        const output = await generateEmbedding(prompt, {
+        const output = await this.generateEmbedding(prompt, {
             pooling: 'mean',
             normalize: true,
         });
@@ -153,7 +193,7 @@ class TutorAgent {
     }
     async saveUserChat(role, content) {
         // Generating embedding for content
-        const output = await generateEmbedding(content, {
+        const output = await this.generateEmbedding(content, {
             pooling: 'mean',
             normalize: true,
         });
@@ -194,16 +234,18 @@ class TutorAgent {
                 });
                 const completion = await response.text();
 
-                // Code to save the new task to the database, but doesn't work well with the current setup
-                const { data, error } = await supabase
-                    .from('Tasks')
-                    .insert(
-                        {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
-                    .select('id, content')
-                    .single();
-                if (error) {
-                    throw error;
-                }
+                // COMMENTING THIS FOR TESTING PURPOSES, GENERATION NEEDS WORK BEFORE SAVING
+                // // Code to save the new task to the database, but doesn't work well with the current setup
+                // const { data, error } = await supabase
+                //     .from('Tasks')
+                //     .insert(
+                //         {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
+                //     .select('id, content')
+                //     .single();
+                // if (error) {
+                //     throw error;
+                // }
+                const data = {id: 100, content: completion};
                 
                 return {id: data.id, content: completion};
             }
