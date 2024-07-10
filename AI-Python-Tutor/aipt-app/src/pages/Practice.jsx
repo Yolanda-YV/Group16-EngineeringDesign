@@ -141,13 +141,14 @@ const Practice = () => {
                 chats={chatHistory} />
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
-                handleSubmit={handleCodeSubmit} />
+                handleSubmit={handleCodeSubmit}
+                hint={hint}
+                isCorrect={isCorrect} />
             <Output 
                 output={output} 
                 task={task.description} 
                 getTask={getTask} 
                 feedback={codeFeedback}
-                hint={hint}
                 isCorrect={isCorrect}/>
         </div>
     );
