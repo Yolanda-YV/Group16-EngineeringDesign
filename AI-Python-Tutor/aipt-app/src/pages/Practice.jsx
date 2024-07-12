@@ -7,6 +7,7 @@ import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
 import { TutorAgent } from '../modules/TutorAgent.js';
 import { PromptAgent } from '../modules/PromptAgent.js';
+import Sidebar from '../components/Sidebar.jsx';
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
@@ -16,8 +17,11 @@ const Practice = () => {
     const [hint, setHint] = useState('') // Validator hint
     
     const [isCorrect, setIsCorrect] = useState(null) // Validator boolean
+    const [userInfo, setUserInfo] = useState(null) // User info [placeholder for now
     const [chatHistory, setChatHistory] = useState([])
     const [task, setTask] = useState({description: "No task yet!", id: null})
+    const [topic, setTopic] = useState(null) // Topic [placeholder for now
+    const [topicList, setTopicList] = useState(null) // List of topics
     const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
     const [taskLoading, setTaskLoading] = useState(false) // Loading state for task retrieval
     const [chatHistoryLoading, setChatHistoryLoading] = useState(true) // Loading state for chat history retrieval
@@ -39,6 +43,16 @@ const Practice = () => {
             setChatHistory(chat);
             setChatHistoryLoading(false);
         };
+        const loadTopics = async () => {
+            const topics = await tutorAgent.getTopics();
+            setTopicList(topics);
+        };
+        const getUserInfo = async () => {
+            const userInfo = await tutorAgent.getUser();
+            setUserInfo(userInfo);
+        };
+        getUserInfo();
+        loadTopics();
         loadChat();
     }, []);
 
@@ -119,7 +133,7 @@ const Practice = () => {
         // Fetching task, task loading true
         setTaskLoading(true);
         try {
-            const task = await tutorAgent.getTask();
+            const task = await tutorAgent.getTask(topic ? topic.id : null);
             const taskObj = {description: task.content, id: task.id}
             setTask(taskObj);
             // Task fetched and set, task loading false
@@ -141,14 +155,23 @@ const Practice = () => {
         const { scrollHeight } = textarea
         textarea.style.height = `${scrollHeight}px`
     }
+    // Handles topic selection
+    const handleTopicSelection = (event) => {
+        setTopic({description: event.target.innerHTML, id: event.target.id});
+    }
 
     return (
         <div className='practice-page'>
+            <Sidebar 
+                topics={topicList}
+                onTopicClick={handleTopicSelection}
+                level={userInfo ? userInfo.level : null} />
             <ChatTool
                 handlePromptChange={handlePromptChange}
                 handleSubmit={handlePromptSubmit}
                 chats={chatHistory}
-                chatLoading={chatHistoryLoading} />
+                chatLoading={chatHistoryLoading}
+                topic={topic ? topic.description : null} />
             <CodeTool 
                 handleEditorChange={handleEditorChange} 
                 handleSubmit={handleCodeSubmit} />

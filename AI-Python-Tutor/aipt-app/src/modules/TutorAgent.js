@@ -48,9 +48,9 @@ class TutorAgent {
         //   The ValidatorAgent will return a response and output
         try {
             // Hardcoded values to use until validator response can be used
-            const isCorrect = false; // This will be replaced by the validator response //testing it for the hint
-            const feedback = 'Good job!'; // This will be replaced by the validator response
-            const hint = 'Check your syntax and try again.'
+            // const isCorrect = false; // This will be replaced by the validator response //testing it for the hint
+            // const feedback = 'Good job!'; // This will be replaced by the validator response
+            // const hint = 'Check your syntax and try again.'
 
             await this.interpreter.initPyodide();
             const output = await this.interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
@@ -106,8 +106,12 @@ class TutorAgent {
                     selected_topic: topicID});
                 if (error) {
                     throw error
-                } else {
+                } else if (data.length > 0) {
                     return data[0];
+                } else {
+                    // No more eligable tasks in the selected topic, creating new one
+                    const newTask = await this.generateNewTask(topicID);
+                    return newTask;
                 }
             } else {
                 // No specific topic selected
@@ -145,6 +149,15 @@ class TutorAgent {
 
     // Database functions
     // Gets current user and returns the user object
+    async getUser() {
+        const { data:{user} } = await supabase.auth.getUser();
+        const { data } = await supabase
+            .from('UserInfo')
+            .select('level, username')
+            .eq('user_id', user.id)
+            .single();
+        return {username: data.username, level: data.level};
+    }
     async getUserChat() {
         // Getting user
         const { data:{user} } = await supabase.auth.getUser();
@@ -251,6 +264,15 @@ class TutorAgent {
             }
         } catch (error) {
             console.error('Error generating new task:', error);
+        }
+    }
+    async getTopics() {
+        const {data, error} = await supabase.from('Topics').select('id, name, level_id');
+        if (error) {
+            console.error('Error getting topics:', error);
+            return null;
+        } else {
+            return data;
         }
     }
 }
