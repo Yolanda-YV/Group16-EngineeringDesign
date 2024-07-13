@@ -97,6 +97,8 @@
     color: inherit;
     text-decoration: inherit;
 }
+
+
 /*Code Tool*/
 .code-tool {
     background-color: var(--color-surface-2);
@@ -107,7 +109,45 @@
     padding: 1rem;
     margin: 1rem;
     gap: 0.5rem;
+    position: relative;
 }
+/* display hint-card */
+.hint-popup {
+    position: absolute;
+    bottom: 80px;
+    right: 35px;
+    display: flex;
+    justify-content: center;
+    background-color: var(--color-surface-3);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    width: 50%;
+    height: fit-content;
+  }
+  
+  .hint-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: fit-content;
+    color: var(--color-primary-6);
+  }
+
+  .close-hint {
+    align-self: flex-end;
+    background-color: var(--color-primary-3);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: auto;
+  }
+
+
 /*Chat Tool*/
 .chat-tool {
     background-color: var(--color-surface-2);
@@ -162,36 +202,10 @@
     border-radius: 0.5rem;
     font-size: 1rem;
 }
-
-/* display hint-card */
-.hint-popup {
-    position: relative;
-    bottom: -10px; /* Adjust as needed */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--color-surface-3);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-  }
-  
-  .hint-content {
-    max-width: 400px;
-    text-align: center;
-  }
-  
-  .close-hint {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: var(--color-primary-3);
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-  }
+/* validation data */
+.card {
+    overflow-y: scroll;
+}
   
 
 /*CredForm*/
