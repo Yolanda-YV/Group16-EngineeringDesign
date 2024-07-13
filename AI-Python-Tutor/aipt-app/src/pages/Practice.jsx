@@ -204,7 +204,9 @@ const Practice = () => {
                         topic={topic ? topic.description : null} />
                     <CodeTool 
                         handleEditorChange={handleEditorChange} 
-                        handleSubmit={handleCodeSubmit} />
+                        handleSubmit={handleCodeSubmit}
+                        hint={hint}
+                        isCorrect={isCorrect} />
                     <Output 
                         output={output} 
                         task={task.description} 
@@ -215,8 +217,6 @@ const Practice = () => {
                         isCorrect={isCorrect} />
                 </div>
             )}
-            
-            
         </div>
     );
 }
