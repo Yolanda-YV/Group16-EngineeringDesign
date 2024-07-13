@@ -68,8 +68,8 @@ class TutorAgent {
                 const { data, error } = await supabase.rpc("update_score", {
                     u_id: user.id,
                     t_id: task.id,
-                    is_correct: isCorrect,
-                    val_response: feedback
+                    is_correct: validation.isCorrect,
+                    val_response: validation.feedback
                 });
                 if (error) {
                     console.error('Error updating score:', error);
