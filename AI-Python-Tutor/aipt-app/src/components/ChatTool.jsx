@@ -3,7 +3,7 @@ import parse from 'html-react-parser';
 import { useEffect, useRef, useState } from 'react'; 
 import { PulseLoader, ClipLoader } from 'react-spinners';
 
-const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading}) => {
+const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading, topic}) => {
     const [responseLoading, setResponseLoading] = useState(false)
     const chatSpace = useRef(null);
     useEffect(() => {
@@ -18,10 +18,14 @@ const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading}) => {
     }, [chats]);
     return (
         <div className='chat-tool'>
+            <div>
+                <h2>{topic ? topic : ''}</h2>
+                <hr></hr>
+            </div>
             <div className='chat-space' ref={chatSpace}>
                 {chats && !chatLoading ? (
                     chats.map((chat, index) => (
-                        <p key={index} className={`chat-message ${chat.role}-chat`}>{parse(chat.content)}</p>
+                        <div key={index} className={`chat-message ${chat.role}-chat`}>{parse(chat.content)}</div>
                     ))
                 ) : (
                     <div className='loader-div'>

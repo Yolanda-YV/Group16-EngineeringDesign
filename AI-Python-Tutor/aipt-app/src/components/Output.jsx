@@ -18,7 +18,9 @@ const Output = ({output, task, getTask, loading, feedback, isCorrect}) => {
                 ) : (
                     <p>{task}</p>
                 )}
-                <button className='submit-btn' onClick={getTask}>Get Task</button>
+                {isCorrect == true && isCorrect ? (
+                    <button className='submit-btn' onClick={getTask}>Get new task</button>
+                ) : null}
             </div>
             <div className='card'>
             <div className='output-section'>

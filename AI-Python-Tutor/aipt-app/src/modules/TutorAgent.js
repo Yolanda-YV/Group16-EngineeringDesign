@@ -34,7 +34,7 @@ class TutorAgent {
         });
         const completion = await response.text();
 
-        // Save chat history
+        //Save chat history
         if (completion) {
             await this.saveUserChat('user', prompt);
             await this.saveUserChat('assistant', completion);
@@ -48,9 +48,9 @@ class TutorAgent {
         //   The ValidatorAgent will return a response and output
         try {
             // Hardcoded values to use until validator response can be used
-            const isCorrect = false; // This will be replaced by the validator response //testing it for the hint
-            const feedback = 'Good job!'; // This will be replaced by the validator response
-            const hint = 'Check your syntax and try again.'
+            // const isCorrect = false; // This will be replaced by the validator response //testing it for the hint
+            // const feedback = 'Good job!'; // This will be replaced by the validator response
+            // const hint = 'Check your syntax and try again.'
 
             await this.interpreter.initPyodide();
             const output = await this.interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
@@ -59,24 +59,24 @@ class TutorAgent {
             const validation = await this.validator.validateCode(code, task.description, output); // TEST VALIDATOR
 
             // COMMENTING THIS FOR TESTING PURPOSES, NO SAVING TO DB UNTIL VALIDATOR RESPONSE CAN BE USED
-            // // Checking if this is an in-progress task or not
-            // const { data:{user} } = await supabase.auth.getUser(); // Getting user
+            // Checking if this is an in-progress task or not
+            const { data:{user} } = await supabase.auth.getUser(); // Getting user
 
-            // // If task exists, update the score, otherwise don't
-            // if (task.id) {
-            //     // Testing DB function update_score()
-            //     const { data, error } = await supabase.rpc("update_score", {
-            //         u_id: user.id,
-            //         t_id: task.id,
-            //         is_correct: isCorrect,
-            //         val_response: feedback
-            //     });
-            //     if (error) {
-            //         console.error('Error updating score:', error);
-            //     } else {
-            //         console.log('Successfully updated score');
-            //     }
-            // }
+            // If task exists, update the score, otherwise don't
+            if (task.id) {
+                // Testing DB function update_score()
+                const { data, error } = await supabase.rpc("update_score", {
+                    u_id: user.id,
+                    t_id: task.id,
+                    is_correct: validation.isCorrect,
+                    val_response: validation.feedback
+                });
+                if (error) {
+                    console.error('Error updating score:', error);
+                } else {
+                    console.log('Successfully updated score');
+                }
+            }
 
             // Validator object exists, but cannot access the feedback, hint, and isCorrect values shown in console
             const allData = {
@@ -106,8 +106,12 @@ class TutorAgent {
                     selected_topic: topicID});
                 if (error) {
                     throw error
-                } else {
+                } else if (data.length > 0) {
                     return data[0];
+                } else {
+                    // No more eligable tasks in the selected topic, creating new one
+                    const newTask = await this.generateNewTask(topicID);
+                    return newTask;
                 }
             } else {
                 // No specific topic selected
@@ -117,7 +121,7 @@ class TutorAgent {
                     throw error
                 } else if (data.length > 0) {
                     // Task that is not completed by user, is in user's level
-                    console.log('data:', data);
+                    // console.log('data:', data);
                     return data[0];
                 } else {
                     // No task that is not completed by user and in user's level, 
@@ -145,6 +149,15 @@ class TutorAgent {
 
     // Database functions
     // Gets current user and returns the user object
+    async getUser() {
+        const { data:{user} } = await supabase.auth.getUser();
+        const { data } = await supabase
+            .from('UserInfo')
+            .select('level, username')
+            .eq('user_id', user.id)
+            .single();
+        return {username: data.username, level: data.level};
+    }
     async getUserChat() {
         // Getting user
         const { data:{user} } = await supabase.auth.getUser();
@@ -166,12 +179,13 @@ class TutorAgent {
     }
     async getRelevantChat (prompt) {
         // Generating embedding for content
-        const output = await this.generateEmbedding(prompt, {
-            pooling: 'mean',
-            normalize: true,
+        // Make a request to the Response serverless function
+        const response = await fetch("/.netlify/functions/GenEmbed", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: prompt,
         });
-        //Extracting embedding
-        const embedding = Array.from(output.data)
+        const embedding = await response.json();
 
         // Getting user
         const { data:{user} } = await supabase.auth.getUser();
@@ -193,12 +207,12 @@ class TutorAgent {
     }
     async saveUserChat(role, content) {
         // Generating embedding for content
-        const output = await this.generateEmbedding(content, {
-            pooling: 'mean',
-            normalize: true,
+        const response = await fetch("/.netlify/functions/GenEmbed", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: prompt,
         });
-        //Extracting embedding
-        const embedding = Array.from(output.data)
+        const embedding = await response.json();
 
         // Getting user
         const { data:{user} } = await supabase.auth.getUser();
@@ -235,22 +249,31 @@ class TutorAgent {
                 const completion = await response.text();
 
                 // COMMENTING THIS FOR TESTING PURPOSES, GENERATION NEEDS WORK BEFORE SAVING
-                // // Code to save the new task to the database, but doesn't work well with the current setup
-                // const { data, error } = await supabase
-                //     .from('Tasks')
-                //     .insert(
-                //         {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
-                //     .select('id, content')
-                //     .single();
-                // if (error) {
-                //     throw error;
-                // }
-                const data = {id: 100, content: completion};
+                // Code to save the new task to the database, but doesn't work well with the current setup
+                const { data, error } = await supabase
+                    .from('Tasks')
+                    .insert(
+                        {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
+                    .select('id, content')
+                    .single();
+                if (error) {
+                    throw error;
+                }
+                //const data = {id: 100, content: completion};
                 
                 return {id: data.id, content: completion};
             }
         } catch (error) {
             console.error('Error generating new task:', error);
+        }
+    }
+    async getTopics() {
+        const {data, error} = await supabase.from('Topics').select('id, name, level_id');
+        if (error) {
+            console.error('Error getting topics:', error);
+            return null;
+        } else {
+            return data;
         }
     }
 }
