@@ -121,7 +121,7 @@ class TutorAgent {
                     throw error
                 } else if (data.length > 0) {
                     // Task that is not completed by user, is in user's level
-                    console.log('data:', data);
+                    // console.log('data:', data);
                     return data[0];
                 } else {
                     // No task that is not completed by user and in user's level, 

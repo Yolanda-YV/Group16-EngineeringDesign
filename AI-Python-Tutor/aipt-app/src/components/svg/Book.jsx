@@ -2,7 +2,7 @@ import react from 'react';
 
 const Book = ({color}) => {
     return (
-        <svg id="euIXNwBWZls1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" width="300" height="300"><g transform="matrix(1.246351 0 0 1.246351-38.25902-53.934553)">
+        <svg id="euIXNwBWZls1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300" shapeRendering="geometricPrecision" textRendering="geometricPrecision" width="300" height="300"><g transform="matrix(1.246351 0 0 1.246351-38.25902-53.934553)">
             <rect 
                 width="211.922503" 
                 height="40.23845" 

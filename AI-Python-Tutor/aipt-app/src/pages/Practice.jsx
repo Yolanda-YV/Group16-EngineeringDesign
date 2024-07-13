@@ -144,18 +144,16 @@ const Practice = () => {
     // Handles task retrieval, will call tutor agent to get a response
     // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
     const getTask = async () => {
-        console.log('Getting task...')
+        //console.log('Getting task...')
         // Fetching task, task loading true
         setTaskLoading(true);
         try {
             const task = await tutorAgent.getTask(topic ? topic.id : null);
             const taskObj = {description: task.content, id: task.id}
             setTask(taskObj);
-            console.log(task)
             // If the topic has changed, update the topic
-            console.log(topic)
             if (!topic || topic.id != task.topic_id && task.topic) {
-                console.log('Setting topic...')
+                //console.log('Setting topic...')
                 setTopic({description: task.topic, id: task.topic_id});
             }
 

@@ -2,7 +2,7 @@ import react from 'react';
 
 const Lock = ({color}) => {
     return (
-        <svg id="elHtvpRwAzC1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" width="300" height="300">
+        <svg id="elHtvpRwAzC1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300" shapeRendering="geometricPrecision" textRendering="geometricPrecision" width="300" height="300">
             <g transform="matrix(1.062119 0 0 1.062119-9.989753-15.371974)">
                 <g transform="translate(0 0.000001)">
                     <line x1="-80.214439" y1="0" x2="80.21444" y2="0" transform="translate(150.65534 133.748545)" fill="#088be2" stroke="#088be2" stroke-width="15"/>
