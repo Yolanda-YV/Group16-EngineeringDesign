@@ -34,7 +34,7 @@ class TutorAgent {
         });
         const completion = await response.text();
 
-        // Save chat history
+        //Save chat history
         if (completion) {
             await this.saveUserChat('user', prompt);
             await this.saveUserChat('assistant', completion);
@@ -59,24 +59,24 @@ class TutorAgent {
             const validation = await this.validator.validateCode(code, task.description, output); // TEST VALIDATOR
 
             // COMMENTING THIS FOR TESTING PURPOSES, NO SAVING TO DB UNTIL VALIDATOR RESPONSE CAN BE USED
-            // // Checking if this is an in-progress task or not
-            // const { data:{user} } = await supabase.auth.getUser(); // Getting user
+            // Checking if this is an in-progress task or not
+            const { data:{user} } = await supabase.auth.getUser(); // Getting user
 
-            // // If task exists, update the score, otherwise don't
-            // if (task.id) {
-            //     // Testing DB function update_score()
-            //     const { data, error } = await supabase.rpc("update_score", {
-            //         u_id: user.id,
-            //         t_id: task.id,
-            //         is_correct: isCorrect,
-            //         val_response: feedback
-            //     });
-            //     if (error) {
-            //         console.error('Error updating score:', error);
-            //     } else {
-            //         console.log('Successfully updated score');
-            //     }
-            // }
+            // If task exists, update the score, otherwise don't
+            if (task.id) {
+                // Testing DB function update_score()
+                const { data, error } = await supabase.rpc("update_score", {
+                    u_id: user.id,
+                    t_id: task.id,
+                    is_correct: isCorrect,
+                    val_response: feedback
+                });
+                if (error) {
+                    console.error('Error updating score:', error);
+                } else {
+                    console.log('Successfully updated score');
+                }
+            }
 
             // Validator object exists, but cannot access the feedback, hint, and isCorrect values shown in console
             const allData = {
@@ -179,12 +179,13 @@ class TutorAgent {
     }
     async getRelevantChat (prompt) {
         // Generating embedding for content
-        const output = await this.generateEmbedding(prompt, {
-            pooling: 'mean',
-            normalize: true,
+        // Make a request to the Response serverless function
+        const response = await fetch("/.netlify/functions/GenEmbed", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: prompt,
         });
-        //Extracting embedding
-        const embedding = Array.from(output.data)
+        const embedding = await response.json();
 
         // Getting user
         const { data:{user} } = await supabase.auth.getUser();
@@ -206,12 +207,12 @@ class TutorAgent {
     }
     async saveUserChat(role, content) {
         // Generating embedding for content
-        const output = await this.generateEmbedding(content, {
-            pooling: 'mean',
-            normalize: true,
+        const response = await fetch("/.netlify/functions/GenEmbed", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: prompt,
         });
-        //Extracting embedding
-        const embedding = Array.from(output.data)
+        const embedding = await response.json();
 
         // Getting user
         const { data:{user} } = await supabase.auth.getUser();
@@ -248,17 +249,17 @@ class TutorAgent {
                 const completion = await response.text();
 
                 // COMMENTING THIS FOR TESTING PURPOSES, GENERATION NEEDS WORK BEFORE SAVING
-                // // Code to save the new task to the database, but doesn't work well with the current setup
-                // const { data, error } = await supabase
-                //     .from('Tasks')
-                //     .insert(
-                //         {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
-                //     .select('id, content')
-                //     .single();
-                // if (error) {
-                //     throw error;
-                // }
-                const data = {id: 100, content: completion};
+                // Code to save the new task to the database, but doesn't work well with the current setup
+                const { data, error } = await supabase
+                    .from('Tasks')
+                    .insert(
+                        {level_id: tasks[0].level_id, topic_id: topicID, content: completion})
+                    .select('id, content')
+                    .single();
+                if (error) {
+                    throw error;
+                }
+                //const data = {id: 100, content: completion};
                 
                 return {id: data.id, content: completion};
             }

@@ -8,7 +8,7 @@ const Sidebar = ({topics, onTopicClick, level}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [Topics, setTopics] = useState(null);
     useEffect(() => {
-        console.log(level)
+        //console.log(level)
         if (topics) {
             const topics_1 = topics.filter(topic => topic.level_id == 1);
             const topics_2 = topics.filter(topic => topic.level_id == 2);

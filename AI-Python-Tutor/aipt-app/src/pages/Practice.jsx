@@ -8,6 +8,7 @@ import Output from '../components/Output';
 import { TutorAgent } from '../modules/TutorAgent.js';
 import { PromptAgent } from '../modules/PromptAgent.js';
 import Sidebar from '../components/Sidebar.jsx';
+import { ClipLoader } from 'react-spinners';
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
@@ -17,12 +18,13 @@ const Practice = () => {
     const [hint, setHint] = useState('') // Validator hint
     
     const [isCorrect, setIsCorrect] = useState(null) // Validator boolean
-    const [userInfo, setUserInfo] = useState(null) // User info [placeholder for now
+    const [userInfo, setUserInfo] = useState(null) // User info 
     const [chatHistory, setChatHistory] = useState([])
     const [task, setTask] = useState({description: "No task yet!", id: null})
-    const [topic, setTopic] = useState(null) // Topic [placeholder for now
+    const [topic, setTopic] = useState(null) // Topic
     const [topicList, setTopicList] = useState(null) // List of topics
     const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
+    const [pageLoading, setPageLoading] = useState(true) // Loading state for page
     const [taskLoading, setTaskLoading] = useState(false) // Loading state for task retrieval
     const [chatHistoryLoading, setChatHistoryLoading] = useState(true) // Loading state for chat history retrieval
     const codeValueRef = useRef("")
@@ -42,6 +44,10 @@ const Practice = () => {
             });
             setChatHistory(chat);
             setChatHistoryLoading(false);
+            // Because loading chat will often take longest, set page loading to false here
+            if (pageLoading) {
+                setPageLoading(false);
+            } 
         };
         const loadTopics = async () => {
             const topics = await tutorAgent.getTopics();
@@ -54,7 +60,15 @@ const Practice = () => {
         getUserInfo();
         loadTopics();
         loadChat();
+        getTask();
+        
     }, []);
+
+    useEffect(() => {
+        if (topic) {
+            getTask();
+        }
+    }, [topic])
 
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
@@ -130,12 +144,21 @@ const Practice = () => {
     // Handles task retrieval, will call tutor agent to get a response
     // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
     const getTask = async () => {
+        console.log('Getting task...')
         // Fetching task, task loading true
         setTaskLoading(true);
         try {
             const task = await tutorAgent.getTask(topic ? topic.id : null);
             const taskObj = {description: task.content, id: task.id}
             setTask(taskObj);
+            console.log(task)
+            // If the topic has changed, update the topic
+            console.log(topic)
+            if (!topic || topic.id != task.topic_id && task.topic) {
+                console.log('Setting topic...')
+                setTopic({description: task.topic, id: task.topic_id});
+            }
+
             // Task fetched and set, task loading false
             setTaskLoading(false);
         } catch (error) {
@@ -166,23 +189,36 @@ const Practice = () => {
                 topics={topicList}
                 onTopicClick={handleTopicSelection}
                 level={userInfo ? userInfo.level : null} />
-            <ChatTool
-                handlePromptChange={handlePromptChange}
-                handleSubmit={handlePromptSubmit}
-                chats={chatHistory}
-                chatLoading={chatHistoryLoading}
-                topic={topic ? topic.description : null} />
-            <CodeTool 
-                handleEditorChange={handleEditorChange} 
-                handleSubmit={handleCodeSubmit} />
-            <Output 
-                output={output} 
-                task={task.description} 
-                getTask={getTask}
-                loading={taskLoading}
-                feedback={codeFeedback}
-                hint={hint}
-                isCorrect={isCorrect} />
+            {pageLoading ? (
+                <div className='loader-div'>
+                    <ClipLoader
+                    color='#088be2'
+                    loading={pageLoading}
+                    size={80}/>
+                </div>
+            ) : (
+                <div className='testclass'>
+                    <ChatTool
+                        handlePromptChange={handlePromptChange}
+                        handleSubmit={handlePromptSubmit}
+                        chats={chatHistory}
+                        chatLoading={chatHistoryLoading}
+                        topic={topic ? topic.description : null} />
+                    <CodeTool 
+                        handleEditorChange={handleEditorChange} 
+                        handleSubmit={handleCodeSubmit} />
+                    <Output 
+                        output={output} 
+                        task={task.description} 
+                        getTask={getTask}
+                        loading={taskLoading}
+                        feedback={codeFeedback}
+                        hint={hint}
+                        isCorrect={isCorrect} />
+                </div>
+            )}
+            
+            
         </div>
     );
 }

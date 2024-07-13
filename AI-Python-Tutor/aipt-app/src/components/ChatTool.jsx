@@ -19,7 +19,8 @@ const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading, topic})
     return (
         <div className='chat-tool'>
             <div>
-                <h1>{topic ? topic : 'No Topic'}</h1>
+                <h2>{topic ? topic : ''}</h2>
+                <hr></hr>
             </div>
             <div className='chat-space' ref={chatSpace}>
                 {chats && !chatLoading ? (

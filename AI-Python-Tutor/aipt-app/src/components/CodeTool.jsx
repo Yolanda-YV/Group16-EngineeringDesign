@@ -79,7 +79,7 @@ const CodeTool = ({handleEditorChange, handleSubmit}) => {
     return (
         <form className='code-tool' onSubmit={handleSubmit}>
             <Editor 
-                height='calc(100vh - 100px - 50px - 4.5rem)'
+                height='calc(100vh - 100px - 50px - 4.75rem)'
                 width='100%'
                 theme='vs-dark'
                 defaultLanguage='python'
