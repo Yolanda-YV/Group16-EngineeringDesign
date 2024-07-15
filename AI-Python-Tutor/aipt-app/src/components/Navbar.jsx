@@ -30,23 +30,25 @@ const Navbar = ({signedIn}) => {
                 </li>
             </ul>
             
-            {signedIn ? 
+            {signedIn ? (
                 <ul>
                     <li>
-                        <Link to="/practice" className='nav-item'>Practice</Link>
+                        <Link to="/practice" className="nav-item">Practice</Link>
                     </li>
                     <li>
-                        <Link to="/" className='nav-item'>Dashboard</Link>
+                        <Link to="/dashboard" className="nav-item">Dashboard</Link>
                     </li>
                     <li>
-                        <Link onClick={onLogout} className='nav-item'>Log Out</Link>
+                        <Link onClick={onLogout} className="nav-item">Log Out</Link>
                     </li>
                 </ul>
-                :
+            ) : (
                 <ul>
-                    
+                    <li>
+                        <Link to="/signin" className="nav-item">Log In</Link>
+                    </li>
                 </ul>
-                }
+            )}
         </nav>
     )
 }
