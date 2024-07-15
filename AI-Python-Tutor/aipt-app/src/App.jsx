@@ -9,6 +9,7 @@ import Practice from './pages/Practice'
 import Dashboard from './pages/Dashboard'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
+import Landing from './pages/Landing'
 import supabase from './utilities/Supabase.js'
 
 function App() {

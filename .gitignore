@@ -161,3 +161,4 @@ cython_debug/
 
 # Local Netlify folder
 .netlify
+AI-Python-Tutor/aipt-app/src/utilities/Supabase.js
