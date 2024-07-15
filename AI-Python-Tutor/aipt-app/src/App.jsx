@@ -9,7 +9,7 @@ import Practice from './pages/Practice'
 import Dashboard from './pages/Dashboard'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
-import Landing from './pages/Landing'
+import Landing from './pages/Landing.jsx'
 import supabase from './utilities/Supabase.js'
 
 function App() {
@@ -32,7 +32,8 @@ function App() {
       <div>
       <Navbar signedIn={true} />
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/practice" element={<Practice />} />
       </Routes>
     </div>
@@ -43,9 +44,11 @@ function App() {
     // Logout button not shown in navbar
     return (
       <div>
-        <Navbar signedIn={false} />
+        <Navbar signedIn={true} />
         <Routes>
-          <Route path="/" element={<SignIn />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/practice" element={<Practice />} />
           <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>
