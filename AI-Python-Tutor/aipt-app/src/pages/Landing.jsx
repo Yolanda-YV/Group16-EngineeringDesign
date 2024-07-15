@@ -1,16 +1,12 @@
 import '../index.css';
 import React, { useState, useEffect } from 'react';
-import supabase from '../utilities/Supabase'; // Import Supabase client instance
-import ProfileCard from '../components/ProfileCard';
-import TopicCards from '../components/TopicCards';
-import { ClipLoader } from 'react-spinners';
 
 const Landing = () => {
     return (
       <div className="min-h-screen bg-gray-100">
       <header className="bg-blue-600 p-4">
         <div className="container mx-auto text-white">
-          <h1 className="text-3xl font-bold">Welcome to PyMon</h1>
+          <h1 className="text-3xl font-bold text-center">Welcome to PyMon!</h1>
         </div>
       </header>
       <main className="container mx-auto py-10">
