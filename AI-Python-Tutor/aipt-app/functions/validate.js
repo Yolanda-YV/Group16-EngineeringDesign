@@ -1,9 +1,8 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({apiKey: process.env.VITE_OPENAI_API_KEY});
+const openai = new OpenAI({ apiKey: process.env.VITE_OPENAI_API_KEY });
 
 export default async (event, context) => {
-    // the event.body comes as a ReadableStream, so we need to convert it to a string
     let data = [];
     for await (const chunk of event.body) {
         data.push(chunk);
@@ -11,17 +10,14 @@ export default async (event, context) => {
     let dataStr = Buffer.concat(data).toString();
     const dataObj = JSON.parse(dataStr);
 
-    // this object should have: code, task, code output
-
     try {
-        // Want a json object returned with different parts of the validators overall feedback
         const systemMessage = `
         You are a Python code validator.
         You will validate the given code labeled with 'User Code:' based on the given task's instructions labeled with 'Task:' and the code output labeled with 'Code Output:'.
         You will then return a JSON object with the following keys:
         - isCorrect: true/false - whether the code performs according to the given task's requirements
-        - hint: a hint to help the user fix their code if it is incorrect
-        - feedback: detailed feedback on the code's efficiency, readability, and conformance to best coding practices
+        - hint: a vague hint to help the user identify where the issue might be if the code is incorrect, without telling them exactly how to fix it
+        - feedback: detailed feedback on the code's efficiency, readability, adherence to best practices, and overall quality
         Ensure that the JSON object is properly formatted and contains all required keys.
         `;
 
@@ -34,7 +30,6 @@ export default async (event, context) => {
             ],
             model: "gpt-3.5-turbo"
         });
-        // Ensure the feedback is in JSON format and includes all necessary keys
 
         let feedback;
         try {
