@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import '../index.css';
 import { ClipLoader } from 'react-spinners';
 
-const Output = ({output, task, getTask, loading, feedback, isCorrect}) => {
+const Output = ({output, task, cycleTask, loading, feedback, isCorrect}) => {
 
     return (
         <div className='output'>
@@ -18,9 +18,10 @@ const Output = ({output, task, getTask, loading, feedback, isCorrect}) => {
                 ) : (
                     <p>{task}</p>
                 )}
-                {isCorrect == true && isCorrect ? (
-                    <button className='submit-btn' onClick={getTask}>Get new task</button>
-                ) : null}
+                {/* {isCorrect == true && isCorrect ? (
+                    <button className='submit-btn' onClick={getNextTask}>Get new task</button>
+                ) : null} */}
+                <button className='submit-btn' onClick={cycleTask}>Get new task</button>
             </div>
             <div className='card'>
             <div className='output-section'>
