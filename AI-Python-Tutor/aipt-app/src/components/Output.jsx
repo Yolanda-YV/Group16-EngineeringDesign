@@ -21,7 +21,12 @@ const Output = ({output, task, cycleTask, loading, feedback, isCorrect}) => {
                 {/* {isCorrect == true && isCorrect ? (
                     <button className='submit-btn' onClick={getNextTask}>Get new task</button>
                 ) : null} */}
-                <button className='submit-btn' onClick={cycleTask}>Get new task</button>
+                <button className='submit-btn' onClick={cycleTask}>
+                  <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 12L22 12" stroke="currentColor" stroke-width="3" />
+                  <path d="M16 6L22 12L16 18" stroke="currentColor" stroke-width="3" />
+                  </svg>
+                </button>
             </div>
             <div className='card'>
             <div className='output-section'>
