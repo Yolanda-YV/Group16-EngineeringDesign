@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import '../index.css';
 import { ClipLoader } from 'react-spinners';
 
-const Output = ({output, task, getTask, loading, feedback, isCorrect, score}) => {
+const Output = ({output, task, cycleTask, loading, feedback, isCorrect, score}) => {
     return (
         <div className='output'>
             <div className='current-task-card'>
@@ -17,9 +17,15 @@ const Output = ({output, task, getTask, loading, feedback, isCorrect, score}) =>
                 ) : (
                     <p>{task}</p>
                 )}
-                {isCorrect == true && isCorrect ? (
-                    <button className='submit-btn' onClick={getTask}>Get new task</button>
-                ) : null}
+                {/* {isCorrect == true && isCorrect ? (
+                    <button className='submit-btn' onClick={getNextTask}>Get new task</button>
+                ) : null} */}
+                <button className='submit-btn' onClick={cycleTask}>
+                  <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 12L22 12" stroke="currentColor" stroke-width="3" />
+                  <path d="M16 6L22 12L16 18" stroke="currentColor" stroke-width="3" />
+                  </svg>
+                </button>
             </div>
             <div className='card'>
             <div className='output-section'>

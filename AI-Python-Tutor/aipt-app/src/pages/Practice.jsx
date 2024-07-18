@@ -17,6 +17,10 @@ const Practice = () => {
     const [output, setOutput] = useState(`Output will be displayed here:`) // Interpreter feedback
     const [hint, setHint] = useState('') // Validator hint
     
+    const [tasks, setTasks] = useState([]) // List of tasks
+    const [currentTaskIndex, setCurrentTaskIndex] = useState(0) // Index of current task
+    const [completedTasks, setCompletedTasks] = useState([]) // List of completed tasks
+
     const [isCorrect, setIsCorrect] = useState(null) // Validator boolean
     const [userInfo, setUserInfo] = useState(null) // User info 
     const [chatHistory, setChatHistory] = useState([])
@@ -66,9 +70,9 @@ const Practice = () => {
 
     useEffect(() => {
         if (topic) {
-            getTask();
+        getTask();
         }
-    }, [topic])
+    }, [topic]);
 
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
@@ -162,28 +166,74 @@ const Practice = () => {
     
     // Handles task retrieval, will call tutor agent to get a response
     // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
+    // const getTask = async () => {
+    //     //console.log('Getting task...')
+    //     // Fetching task, task loading true
+    //     setTaskLoading(true);
+    //     try {
+    //         const task = await tutorAgent.getTask(topic ? topic.id : null);
+    //         const taskObj = {description: task.content, id: task.id}
+    //         setTask(taskObj);
+    //         // If the topic has changed, update the topic
+    //         if (!topic || topic.id != task.topic_id && task.topic) {
+    //             //console.log('Setting topic...')
+    //             setTopic({description: task.topic, id: task.topic_id});
+    //         }
+
+    //         // Task fetched and set, task loading false
+    //         setTaskLoading(false);
+    //     } catch (error) {
+    //         console.error('Error getting task:', error);
+    //     }
+    // }
+
+    // Handles task retrieval, will call tutor agent to get a response
     const getTask = async () => {
-        //console.log('Getting task...')
-        // Fetching task, task loading true
         setTaskLoading(true);
         try {
-            const task = await tutorAgent.getTask(topic ? topic.id : null);
-            console.log(task.code)
-            const taskObj = {description: task.content, id: task.id, score: task.score, code: task.code}
-            setTask(taskObj);
-            console.log("Set new task:", taskObj)
-            // If the topic has changed, update the topic
-            if (!topic || topic.id != task.topic_id && task.topic) {
-                //console.log('Setting topic...')
-                setTopic({description: task.topic, id: task.topic_id});
-            }
+            const tasks = await tutorAgent.getTask(topic ? topic.id : null);
+            // If tasks are fetched, set the tasks, set the current task index to 0, and set the current task
+            if (tasks && tasks.length > 0) {
+                setTasks(tasks);
+                setCurrentTaskIndex(0);
+                setTask({ description: tasks[0].content, id: tasks[0].id, score: tasks[0].score, code: tasks[0].code });
 
-            // Task fetched and set, task loading false
-            setTaskLoading(false);
+                // If the topic has changed, update the topic
+                if (!topic || (topic.id !== tasks[0].topic_id && tasks[0].topic)) {
+                    setTopic({ description: tasks[0].topic, id: tasks[0].topic_id });
+                }
+            } else {
+                console.error('No tasks fetched.');
+            }
         } catch (error) {
             console.error('Error getting task:', error);
+        } finally {
+            setTaskLoading(false);
         }
-    }
+    };
+
+    // Cycles through tasks, will call tutor agent to get a response
+    const cycleTask = () => {
+        setCurrentTaskIndex(prevIndex => {
+            const incompleteTasks = tasks.filter(task => !completedTasks.includes(task.id));
+            // If there are no incomplete tasks, log that all tasks are completed and return the previous index
+            if (incompleteTasks.length === 0) {
+                console.log('All tasks completed.');
+                return prevIndex;
+            }
+            // Get the next incomplete task
+            const newIndex = (prevIndex + 1) % incompleteTasks.length;
+            const taskObj = { 
+                description: incompleteTasks[newIndex].content, 
+                id: incompleteTasks[newIndex].id, 
+                score: incompleteTasks[newIndex].score, 
+                code: incompleteTasks[newIndex].code }
+            console.log('Cycling task:', taskObj);
+            setTask(taskObj);
+            // If the topic has changed, update the topic
+            return newIndex;
+        });
+    };
 
     // Handle's changes in user input (code tool and chat tool) and updates the ref
     const handleEditorChange = (value, event) => {
@@ -235,6 +285,7 @@ const Practice = () => {
                         output={output} 
                         task={task.description} 
                         getTask={getTask}
+                        cycleTask={cycleTask}
                         loading={taskLoading}
                         feedback={codeFeedback}
                         hint={hint}

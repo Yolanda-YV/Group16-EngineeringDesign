@@ -100,7 +100,8 @@ class TutorAgent {
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
-                    return data[0];
+                    // return data[0];
+                    return data; // Returning all tasks that are not completed by user and in user's level
                 } else {
                     // No more eligable tasks in the selected topic, creating new one
                     const newTask = await this.generateNewTask(topicID);
@@ -116,7 +117,8 @@ class TutorAgent {
                 } else if (data.length > 0) {
                     // Task that is not completed by user, is in user's level
                     // console.log('data:', data);
-                    return data[0];
+                    // return data[0];
+                    return data; // Returning all tasks that are not completed by user and in user's level
                 } else {
                     // No task that is not completed by user and in user's level, 
                     //  means user has completed all tasks in their level, but has not scored high enough on all topics
