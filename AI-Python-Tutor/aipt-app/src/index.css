@@ -277,6 +277,13 @@
     overflow-y: scroll;
 }
   
+ /* output loader */
+.output-loader-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    margin: 0%;
+}
 
 /*CredForm*/
 .cred-form {
