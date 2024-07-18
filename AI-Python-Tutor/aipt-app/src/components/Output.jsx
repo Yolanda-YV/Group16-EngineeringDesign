@@ -2,8 +2,7 @@ import React, {useState, useEffect} from 'react';
 import '../index.css';
 import { ClipLoader } from 'react-spinners';
 
-const Output = ({output, task, getTask, loading, feedback, isCorrect}) => {
-
+const Output = ({output, task, getTask, loading, feedback, isCorrect, score}) => {
     return (
         <div className='output'>
             <div className='current-task-card'>
@@ -28,8 +27,9 @@ const Output = ({output, task, getTask, loading, feedback, isCorrect}) => {
               <pre>{output}</pre>
             </div>
             <div className='isCorrect'>
-              <h1>Correct</h1>
-              <p>{isCorrect !== null ? (isCorrect ? 'Yes' : 'No') : 'Not checked yet'}</p>
+              <h1>Result</h1>
+              <p>{isCorrect !== null ? (isCorrect ? 'That\s correct!' : 'That\'s not right') : 'Not checked yet'}</p>
+              <p className={isCorrect !== null ? (isCorrect ? 'correct-score' : 'incorrect-score') : ''}>{score ? `${score}%` : ''}</p>
             </div>
             {/* feedback shows when isCorrect is true */}
             {isCorrect === true && (

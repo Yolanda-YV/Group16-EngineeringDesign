@@ -1,9 +1,4 @@
 import supabase from '../utilities/Supabase.js';
-// npm i @xenova/transformers
-import { pipeline, env } from '@xenova/transformers';
-// Have to have the lines below to avoid errors in the dev server
-env.allowLocalModels = false;
-//env.useBrowserCache = false;
 
 import { Interpreter } from './Interpreter.js';
 import { ValidatorAgent } from './ValidatorAgent.js';
@@ -13,10 +8,6 @@ class TutorAgent {
     constructor() {
         this.interpreter = new Interpreter();
         this.validator = new ValidatorAgent();
-        this.generateEmbed();
-    }
-    async generateEmbed() {
-        this.generateEmbedding = await pipeline('feature-extraction', 'Supabase/gte-small');
     }
     async requestResponse(prompt) {
         // This function will call the Response serverless function to get a response from OPENAI
@@ -69,7 +60,8 @@ class TutorAgent {
                     u_id: user.id,
                     t_id: task.id,
                     is_correct: validation.isCorrect,
-                    val_response: validation.feedback
+                    val_response: validation.feedback,
+                    user_code: code,
                 });
                 if (error) {
                     console.error('Error updating score:', error);
@@ -104,6 +96,7 @@ class TutorAgent {
                 const { error, data } = await supabase.rpc("get_task", {
                     u_id: user.id,
                     selected_topic: topicID});
+                console.log(data);
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
@@ -117,6 +110,7 @@ class TutorAgent {
                 // No specific topic selected
                 const { error, data } = await supabase.rpc("get_task", {
                     u_id: user.id});
+                console.log(data);
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
@@ -228,6 +222,44 @@ class TutorAgent {
             } 
         }
     }
+    async saveCode(code, task) {
+        // Getting user
+        const { data:{user} } = await supabase.auth.getUser();
+        // If user exists, save code data
+        if (user) {
+            const { data, error } = await supabase
+                .from('UserTasks')
+                .select()
+                .eq('user_id', user.id)
+                .eq('task_id', task.id);
+            if (data.length > 0) {
+                // Task exists, update the code
+                console.log('Updating code')
+                const { data, error } = await supabase
+                    .from('UserTasks')
+                    .update({code: code})
+                    .eq('user_id', user.id)
+                    .eq('task_id', task.id);
+                    if (error) {
+                        console.error('Error saving code data:', error);
+                    }
+            } else if (error) {
+                console.error('Error saving code data:', error);
+            } else {
+                // Task doesn't exist, create a new task
+                console.log('Inserting code')
+                const { data, error } = await supabase
+                    .from('UserTasks')
+                    .insert([
+                        {user_id: user.id, task_id: task.id, code: code},
+                    ]);
+                if (error) {
+                    console.error('Error saving code data:', error);
+                }
+            }
+            
+        }
+    }
     async generateNewTask(topicID) {
         // This function will use the llm to generate new tasks for the user
         // Will use a given topic and existing tasks within that topic to create a new task
@@ -248,7 +280,6 @@ class TutorAgent {
                 });
                 const completion = await response.text();
 
-                // COMMENTING THIS FOR TESTING PURPOSES, GENERATION NEEDS WORK BEFORE SAVING
                 // Code to save the new task to the database, but doesn't work well with the current setup
                 const { data, error } = await supabase
                     .from('Tasks')
@@ -259,7 +290,7 @@ class TutorAgent {
                 if (error) {
                     throw error;
                 }
-                //const data = {id: 100, content: completion};
+                //const data = {id: 1000, content: completion};
                 
                 return {id: data.id, content: completion};
             }

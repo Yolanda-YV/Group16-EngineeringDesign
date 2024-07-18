@@ -96,6 +96,12 @@ const Practice = () => {
             setCodeFeedback(response.feedback);
             setHint(response.hint);
             setIsCorrect(response.isCorrect);
+            if (!response.isCorrect && task.score > 0) {
+                console.log('Decrementing score...')
+                setTask({
+                    ...task,
+                    score: task.score - 10});
+            }
 
         } catch (error) {
             console.error('Error handling code submission:', error);
@@ -140,6 +146,19 @@ const Practice = () => {
             // Handle errors here, such as displaying an error message to the user
         }
     }
+
+    // Handles saving code to the database
+    const handleSave = async () => {
+        try {
+            // Get the code from the ref
+            const code = codeValueRef.current;
+            // Save the code to the database
+            await tutorAgent.saveCode(code, task);
+        } catch (error) {
+            console.error('Error saving code:', error);
+            // Handle errors here, such as displaying an error message to the user
+        }
+    }
     
     // Handles task retrieval, will call tutor agent to get a response
     // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
@@ -149,8 +168,10 @@ const Practice = () => {
         setTaskLoading(true);
         try {
             const task = await tutorAgent.getTask(topic ? topic.id : null);
-            const taskObj = {description: task.content, id: task.id}
+            console.log(task.code)
+            const taskObj = {description: task.content, id: task.id, score: task.score, code: task.code}
             setTask(taskObj);
+            console.log("Set new task:", taskObj)
             // If the topic has changed, update the topic
             if (!topic || topic.id != task.topic_id && task.topic) {
                 //console.log('Setting topic...')
@@ -166,6 +187,7 @@ const Practice = () => {
 
     // Handle's changes in user input (code tool and chat tool) and updates the ref
     const handleEditorChange = (value, event) => {
+        console.log('Code changed:', value)
         codeValueRef.current = value
     }
     const handlePromptChange = (event) => {
@@ -206,7 +228,9 @@ const Practice = () => {
                         handleEditorChange={handleEditorChange} 
                         handleSubmit={handleCodeSubmit}
                         hint={hint}
-                        isCorrect={isCorrect} />
+                        isCorrect={isCorrect}
+                        code={task.code}
+                        handleSave={handleSave} />
                     <Output 
                         output={output} 
                         task={task.description} 
@@ -214,7 +238,8 @@ const Practice = () => {
                         loading={taskLoading}
                         feedback={codeFeedback}
                         hint={hint}
-                        isCorrect={isCorrect} />
+                        isCorrect={isCorrect}
+                        score={task.score} />
                 </div>
             )}
         </div>

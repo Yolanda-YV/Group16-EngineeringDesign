@@ -9,6 +9,15 @@
     cursor: pointer;
     width: 100%;
     height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.submit-btn svg {
+    width: 2.5rem;
+    height: auto;
 }
 .submit-btn:hover {
     background-color: var(--color-primary-1);
@@ -45,6 +54,12 @@
 .expand-condense-img {
     background-color: #EEEEEE;
     width: 1.5rem;
+}
+.incorrect-score {
+    color: red;
+}
+.correct-score {
+    color: green;
 }
 
 /* || COMPONENTS*/
@@ -174,6 +189,14 @@
     margin: 1rem;
     gap: 0.5rem;
     position: relative;
+}
+.save-submit {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 /* display hint-card */
 .hint-popup {
