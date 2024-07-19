@@ -8,7 +8,7 @@ import Submit from './svg/Submit.jsx';
 // NOTE: Editor height is 100vh - 90px (Navbar) - 50px (Submit button) - 4.5rem (Gaps and Padding)
 const CodeTool = ({handleEditorChange, handleSubmit, handleSave, hint, isCorrect, code}) => {
     const [showHint, setShowHint] = useState(false);
-    const [showCode, setShowCode] = useState(null);
+    // const [showCode, setShowCode] = useState(null);
     // Show hint when the answer is incorrect
     useEffect(() => {
         if (isCorrect === false) {
@@ -17,20 +17,20 @@ const CodeTool = ({handleEditorChange, handleSubmit, handleSave, hint, isCorrect
             setShowHint(false);
         }
     }, [isCorrect]);
-    useEffect(() => {
-        if (code) {
-            console.log("Code: ", code);
-            setShowCode(code);
-        } else {
-            console.log("Code is empty", code);
-            setShowCode('# Write your code here');
-        }
-    }, [code]);
+    // useEffect(() => {
+    //     if (code) {
+    //         console.log("Code: ", code);
+    //         setShowCode(code);
+    //     } else {
+    //         console.log("Code is empty", code);
+    //         setShowCode('# Write your code here');
+    //     }
+    // }, [code]);
     // Close hint popup
     const closeHint = () => {
         setShowHint(false);
     };
-    
+    console.log(code);
     return (
         <form className='code-tool' onSubmit={handleSubmit}>
             <Editor 
@@ -39,7 +39,7 @@ const CodeTool = ({handleEditorChange, handleSubmit, handleSave, hint, isCorrect
                 theme='vs-dark'
                 defaultLanguage='python'
                 defaultValue='# Write your code here'
-                value={showCode ? showCode : '# Write your code here'}
+                value={code ? code : '# Write your code here'}
                 onChange={handleEditorChange}></Editor>
             <div className='save-submit'>
                 <button className='submit-btn' type='button' onClick={handleSave}><Save color={'#EEEEEE'} />Save</button>

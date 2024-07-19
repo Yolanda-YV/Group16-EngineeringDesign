@@ -14,7 +14,7 @@ const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
     // - doesn't reset on every render 
     // - doesn't trigger a re-render on change)
-    const [output, setOutput] = useState(`Output will be displayed here:`) // Interpreter feedback
+    const [output, setOutput] = useState(null) // Interpreter feedback
     const [hint, setHint] = useState('') // Validator hint
     
     const [tasks, setTasks] = useState([]) // List of tasks
@@ -24,10 +24,10 @@ const Practice = () => {
     const [isCorrect, setIsCorrect] = useState(null) // Validator boolean
     const [userInfo, setUserInfo] = useState(null) // User info 
     const [chatHistory, setChatHistory] = useState([])
-    const [task, setTask] = useState({description: "No task yet!", id: null})
+    const [task, setTask] = useState(null)
     const [topic, setTopic] = useState(null) // Topic
     const [topicList, setTopicList] = useState(null) // List of topics
-    const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
+    const [codeFeedback, setCodeFeedback] = useState(null) // Validator Feedback
     const [pageLoading, setPageLoading] = useState(true) // Loading state for page
     const [taskLoading, setTaskLoading] = useState(false) // Loading state for task retrieval
     const [chatHistoryLoading, setChatHistoryLoading] = useState(true) // Loading state for chat history retrieval
@@ -101,10 +101,15 @@ const Practice = () => {
             setHint(response.hint);
             setIsCorrect(response.isCorrect);
             if (!response.isCorrect && task.score > 0) {
-                console.log('Decrementing score...')
+                console.log('Decrementing existing score...')
                 setTask({
                     ...task,
                     score: task.score - 10});
+            } else if (!response.isCorrect && !task.score) {
+                console.log('Decrementing new score...')
+                setTask({
+                    ...task,
+                    score: 100 - 10});
             }
 
         } catch (error) {
@@ -202,6 +207,13 @@ const Practice = () => {
                 if (!topic || (topic.id !== tasks[0].topic_id && tasks[0].topic)) {
                     setTopic({ description: tasks[0].topic, id: tasks[0].topic_id });
                 }
+
+                // Set feedback to defaults
+                setIsCorrect(null);
+                setCodeFeedback(null);
+                setHint(null);
+                setOutput(null);
+
             } else {
                 console.error('No tasks fetched.');
             }
@@ -229,7 +241,16 @@ const Practice = () => {
                 score: incompleteTasks[newIndex].score, 
                 code: incompleteTasks[newIndex].code }
             console.log('Cycling task:', taskObj);
+
+            // Set feedback to defaults
+            setIsCorrect(null);
+            setCodeFeedback(null);
+            setHint(null);
+            setOutput(null);
+
             setTask(taskObj);
+
+            
             // If the topic has changed, update the topic
             return newIndex;
         });
@@ -237,7 +258,7 @@ const Practice = () => {
 
     // Handle's changes in user input (code tool and chat tool) and updates the ref
     const handleEditorChange = (value, event) => {
-        console.log('Code changed:', value)
+        //console.log('Code changed:', value)
         codeValueRef.current = value
     }
     const handlePromptChange = (event) => {
@@ -279,18 +300,18 @@ const Practice = () => {
                         handleSubmit={handleCodeSubmit}
                         hint={hint}
                         isCorrect={isCorrect}
-                        code={task.code}
+                        code={task ? task.code : null}
                         handleSave={handleSave} />
                     <Output 
                         output={output} 
-                        task={task.description} 
+                        task={task ? task.description : null} 
                         getTask={getTask}
                         cycleTask={cycleTask}
                         loading={taskLoading}
                         feedback={codeFeedback}
                         hint={hint}
                         isCorrect={isCorrect}
-                        score={task.score} />
+                        score={task ? task.score : null} />
                 </div>
             )}
         </div>

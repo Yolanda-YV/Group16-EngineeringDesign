@@ -61,6 +61,10 @@
 .correct-score {
     color: green;
 }
+.correct-score:after {
+    content: '\2714';
+    margin: 0.5rem;
+}
 
 /* || COMPONENTS*/
 /*Navbar*/

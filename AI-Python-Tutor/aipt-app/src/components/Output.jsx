@@ -30,12 +30,19 @@ const Output = ({output, task, cycleTask, loading, feedback, isCorrect, score}) 
             <div className='card'>
             <div className='output-section'>
               <h1>Output</h1>
-              <pre>{output}</pre>
+              <pre>{output ? output : 'Code output displayed here'}</pre>
             </div>
             <div className='isCorrect'>
               <h1>Result</h1>
-              <p>{isCorrect !== null ? (isCorrect ? 'That\s correct!' : 'That\'s not right') : 'Not checked yet'}</p>
-              <p className={isCorrect !== null ? (isCorrect ? 'correct-score' : 'incorrect-score') : ''}>{score ? `${score}%` : ''}</p>
+              <p>{isCorrect !== null ? (isCorrect ? 'That\s correct!' : 'That\'s incorrect') : 'Not checked yet'}</p>
+              <p>
+                {score ? `${score}%` : isCorrect !== null ? (isCorrect ? '100%' : '') : ''} 
+                {isCorrect !== null ? (isCorrect ? (
+                  <span className='correct-score'></span>
+                ) : (
+                  <span className='incorrect-score'> -10</span>
+                )) : ''}
+                </p>
             </div>
             {/* feedback shows when isCorrect is true */}
             {isCorrect === true && (
