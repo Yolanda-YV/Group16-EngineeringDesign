@@ -13,7 +13,7 @@ const CodeTool = ({handleEditorChange, handleSubmit, handleSave, hint, isCorrect
     useEffect(() => {
         if (isCorrect === false) {
             setShowHint(true);
-        } else if (isCorrect === true) {
+        } else if (isCorrect === true || isCorrect === null) {
             setShowHint(false);
         }
     }, [isCorrect]);
