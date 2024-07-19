@@ -303,7 +303,7 @@ const Practice = () => {
                         code={task ? task.code : null}
                         handleSave={handleSave} />
                     <Output 
-                        output={output} 
+                        output={output ? output : 'Code output displayed here'} 
                         task={task ? task.description : null} 
                         getTask={getTask}
                         cycleTask={cycleTask}
