@@ -1,21 +1,22 @@
-import react from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import parse from 'html-react-parser';
-import { useEffect, useRef, useState } from 'react'; 
 import { PulseLoader, ClipLoader } from 'react-spinners';
 
-const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading}) => {
-    const [responseLoading, setResponseLoading] = useState(false)
+const ChatTool = ({ handleSubmit, handlePromptChange, chats, chatLoading, handleClearChat }) => {
+    const [responseLoading, setResponseLoading] = useState(false);
     const chatSpace = useRef(null);
+
     useEffect(() => {
         chatSpace.current.scrollTop = chatSpace.current.scrollHeight;
         if (chats.length > 0) {
-            if (chats[chats.length - 1].role == 'user') {
+            if (chats[chats.length - 1].role === 'user') {
                 setResponseLoading(true);
             } else {
                 setResponseLoading(false);
             }
         }
     }, [chats]);
+
     return (
         <div className='chat-tool'>
             <div className='chat-space' ref={chatSpace}>
@@ -25,18 +26,12 @@ const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading}) => {
                     ))
                 ) : (
                     <div className='loader-div'>
-                        <ClipLoader
-                            color='#088be2'
-                            loading={chatLoading}
-                            size={30}/>
+                        <ClipLoader color='#088be2' loading={chatLoading} size={30} />
                     </div>
                 )}
                 {responseLoading ? (
                     <div className='chat-loader-div'>
-                        <PulseLoader
-                            color='#088be2'
-                            loading={responseLoading}
-                            size={10}/>
+                        <PulseLoader color='#088be2' loading={responseLoading} size={10} />
                     </div>
                 ) : null}
             </div>
@@ -48,8 +43,9 @@ const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading}) => {
                     onChange={handlePromptChange}></textarea>
                 <button type='submit' className='submit-btn'>Send</button>
             </form>
+            <button onClick={handleClearChat} className='clear-chat-btn'>Clear Chat</button>
         </div>
     );
-}
+};
 
-export default ChatTool
+export default ChatTool;
