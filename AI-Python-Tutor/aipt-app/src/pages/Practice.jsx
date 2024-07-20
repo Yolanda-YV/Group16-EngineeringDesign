@@ -273,6 +273,9 @@ const Practice = () => {
     const handleTopicSelection = (event) => {
         setTopic({description: event.target.innerHTML, id: event.target.id});
     }
+    const handleClearChat = () => {
+        setChatHistory([]);
+    };
 
     return (
         <div className='practice-page'>
@@ -292,6 +295,7 @@ const Practice = () => {
                     <ChatTool
                         handlePromptChange={handlePromptChange}
                         handleSubmit={handlePromptSubmit}
+                        handleClearChat={handleClearChat}
                         chats={chatHistory}
                         chatLoading={chatHistoryLoading}
                         topic={topic ? topic.description : null} />
