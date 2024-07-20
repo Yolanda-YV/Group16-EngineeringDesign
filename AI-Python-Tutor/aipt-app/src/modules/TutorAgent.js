@@ -309,6 +309,27 @@ class TutorAgent {
             return data;
         }
     }
+
+    async clearChatHistory() {
+        try {
+            const { data:{user} } = await supabase.auth.getUser();
+            if (user) {
+                const { error } = await supabase
+                    .from('Chat')
+                    .delete()
+                    .eq('user_id', user.id);
+    
+                if (error) {
+                    console.error('Error clearing chat history:', error);
+                } else {
+                    console.log('Chat history cleared successfully');
+                }
+            }
+        } catch (error) {
+            console.error('Error clearing chat history:', error);
+        }
+    }
+    
 }
 
 export {TutorAgent};
