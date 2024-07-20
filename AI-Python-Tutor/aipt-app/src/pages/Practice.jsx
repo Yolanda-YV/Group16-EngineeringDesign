@@ -74,6 +74,8 @@ const Practice = () => {
         }
     }, [topic]);
 
+    
+
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
     const handleCodeSubmit = async (e) => {
@@ -273,6 +275,18 @@ const Practice = () => {
     const handleTopicSelection = (event) => {
         setTopic({description: event.target.innerHTML, id: event.target.id});
     }
+    const handleClearChat = async () => {
+        try {
+            // Call the tutor agent's clearChat method
+            await tutorAgent.clearChatHistory();
+            
+            // Clear chat history in the component state
+            setChatHistory([]);
+            console.log("Chat history cleared.");
+        } catch (error) {
+            console.error('Error clearing chat history:', error);
+        }
+    };
 
     return (
         <div className='practice-page'>
@@ -292,6 +306,7 @@ const Practice = () => {
                     <ChatTool
                         handlePromptChange={handlePromptChange}
                         handleSubmit={handlePromptSubmit}
+                        handleClearChat={handleClearChat}
                         chats={chatHistory}
                         chatLoading={chatHistoryLoading}
                         topic={topic ? topic.description : null} />

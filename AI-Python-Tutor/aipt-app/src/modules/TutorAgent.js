@@ -96,7 +96,7 @@ class TutorAgent {
                 const { error, data } = await supabase.rpc("get_task", {
                     u_id: user.id,
                     selected_topic: topicID});
-                console.log(data);
+                // console.log(data);
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
@@ -111,7 +111,7 @@ class TutorAgent {
                 // No specific topic selected
                 const { error, data } = await supabase.rpc("get_task", {
                     u_id: user.id});
-                console.log(data);
+                // console.log(data);
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
@@ -309,6 +309,27 @@ class TutorAgent {
             return data;
         }
     }
+
+    async clearChatHistory() {
+        try {
+            const { data:{user} } = await supabase.auth.getUser();
+            if (user) {
+                const { error } = await supabase
+                    .from('Chat')
+                    .delete()
+                    .eq('user_id', user.id);
+    
+                if (error) {
+                    console.error('Error clearing chat history:', error);
+                } else {
+                    console.log('Chat history cleared successfully');
+                }
+            }
+        } catch (error) {
+            console.error('Error clearing chat history:', error);
+        }
+    }
+    
 }
 
 export {TutorAgent};
