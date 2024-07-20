@@ -96,7 +96,7 @@ class TutorAgent {
                 const { error, data } = await supabase.rpc("get_task", {
                     u_id: user.id,
                     selected_topic: topicID});
-                console.log(data);
+                // console.log(data);
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
@@ -111,7 +111,7 @@ class TutorAgent {
                 // No specific topic selected
                 const { error, data } = await supabase.rpc("get_task", {
                     u_id: user.id});
-                console.log(data);
+                // console.log(data);
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
