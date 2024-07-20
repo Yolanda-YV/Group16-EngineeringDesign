@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import parse from 'html-react-parser';
 import { PulseLoader, ClipLoader } from 'react-spinners';
+import Send from './svg/Send.jsx';
 
-const ChatTool = ({ handleSubmit, handlePromptChange, chats, chatLoading, handleClearChat }) => {
-    const [responseLoading, setResponseLoading] = useState(false);
+const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading}) => {
+    const [responseLoading, setResponseLoading] = useState(false)
     const chatSpace = useRef(null);
 
     useEffect(() => {
@@ -19,10 +20,14 @@ const ChatTool = ({ handleSubmit, handlePromptChange, chats, chatLoading, handle
 
     return (
         <div className='chat-tool'>
+            <div>
+                <h2>{topic ? topic : ''}</h2>
+                <hr></hr>
+            </div>
             <div className='chat-space' ref={chatSpace}>
                 {chats && !chatLoading ? (
                     chats.map((chat, index) => (
-                        <p key={index} className={`chat-message ${chat.role}-chat`}>{parse(chat.content)}</p>
+                        <div key={index} className={`chat-message ${chat.role}-chat`}>{parse(chat.content)}</div>
                     ))
                 ) : (
                     <div className='loader-div'>
@@ -41,7 +46,7 @@ const ChatTool = ({ handleSubmit, handlePromptChange, chats, chatLoading, handle
                     type='text' 
                     placeholder='Type your message here' 
                     onChange={handlePromptChange}></textarea>
-                <button type='submit' className='submit-btn'>Send</button>
+                <button type='submit' className='submit-btn'><Send color={'#EEEEEE'} />Send</button>
             </form>
             <button onClick={handleClearChat} className='clear-chat-btn'>Clear Chat</button>
         </div>

@@ -7,18 +7,28 @@ import ChatTool from '../components/ChatTool';
 import Output from '../components/Output';
 import { TutorAgent } from '../modules/TutorAgent.js';
 import { PromptAgent } from '../modules/PromptAgent.js';
+import Sidebar from '../components/Sidebar.jsx';
+import { ClipLoader } from 'react-spinners';
 
 const Practice = () => {
     // Using useRef to hold code editor value to store it between re-renders 
     // - doesn't reset on every render 
     // - doesn't trigger a re-render on change)
-    const [output, setOutput] = useState(`Output will be displayed here:`) // Interpreter feedback
+    const [output, setOutput] = useState(null) // Interpreter feedback
     const [hint, setHint] = useState('') // Validator hint
     
+    const [tasks, setTasks] = useState([]) // List of tasks
+    const [currentTaskIndex, setCurrentTaskIndex] = useState(0) // Index of current task
+    const [completedTasks, setCompletedTasks] = useState([]) // List of completed tasks
+
     const [isCorrect, setIsCorrect] = useState(null) // Validator boolean
+    const [userInfo, setUserInfo] = useState(null) // User info 
     const [chatHistory, setChatHistory] = useState([])
-    const [task, setTask] = useState({description: "No task yet!", id: null})
-    const [codeFeedback, setCodeFeedback] = useState("No feedback yet!") // Validator Feedback
+    const [task, setTask] = useState(null)
+    const [topic, setTopic] = useState(null) // Topic
+    const [topicList, setTopicList] = useState(null) // List of topics
+    const [codeFeedback, setCodeFeedback] = useState(null) // Validator Feedback
+    const [pageLoading, setPageLoading] = useState(true) // Loading state for page
     const [taskLoading, setTaskLoading] = useState(false) // Loading state for task retrieval
     const [chatHistoryLoading, setChatHistoryLoading] = useState(true) // Loading state for chat history retrieval
     const codeValueRef = useRef("")
@@ -38,9 +48,31 @@ const Practice = () => {
             });
             setChatHistory(chat);
             setChatHistoryLoading(false);
+            // Because loading chat will often take longest, set page loading to false here
+            if (pageLoading) {
+                setPageLoading(false);
+            } 
         };
+        const loadTopics = async () => {
+            const topics = await tutorAgent.getTopics();
+            setTopicList(topics);
+        };
+        const getUserInfo = async () => {
+            const userInfo = await tutorAgent.getUser();
+            setUserInfo(userInfo);
+        };
+        getUserInfo();
+        loadTopics();
         loadChat();
+        getTask();
+        
     }, []);
+
+    useEffect(() => {
+        if (topic) {
+        getTask();
+        }
+    }, [topic]);
 
     // Handle code submission, will call prompt agent to get response 
     //  (involves tutor agent, validator agent, and interpreter)
@@ -68,6 +100,17 @@ const Practice = () => {
             setCodeFeedback(response.feedback);
             setHint(response.hint);
             setIsCorrect(response.isCorrect);
+            if (!response.isCorrect && task.score > 0) {
+                console.log('Decrementing existing score...')
+                setTask({
+                    ...task,
+                    score: task.score - 10});
+            } else if (!response.isCorrect && !task.score) {
+                console.log('Decrementing new score...')
+                setTask({
+                    ...task,
+                    score: 100 - 10});
+            }
 
         } catch (error) {
             console.error('Error handling code submission:', error);
@@ -112,25 +155,110 @@ const Practice = () => {
             // Handle errors here, such as displaying an error message to the user
         }
     }
+
+    // Handles saving code to the database
+    const handleSave = async () => {
+        try {
+            // Get the code from the ref
+            const code = codeValueRef.current;
+            // Save the code to the database
+            await tutorAgent.saveCode(code, task);
+        } catch (error) {
+            console.error('Error saving code:', error);
+            // Handle errors here, such as displaying an error message to the user
+        }
+    }
     
     // Handles task retrieval, will call tutor agent to get a response
     // Tutor agent will get a task from the database based on user progress/skill -- for early testing purposes, this task will be random
+    // const getTask = async () => {
+    //     //console.log('Getting task...')
+    //     // Fetching task, task loading true
+    //     setTaskLoading(true);
+    //     try {
+    //         const task = await tutorAgent.getTask(topic ? topic.id : null);
+    //         const taskObj = {description: task.content, id: task.id}
+    //         setTask(taskObj);
+    //         // If the topic has changed, update the topic
+    //         if (!topic || topic.id != task.topic_id && task.topic) {
+    //             //console.log('Setting topic...')
+    //             setTopic({description: task.topic, id: task.topic_id});
+    //         }
+
+    //         // Task fetched and set, task loading false
+    //         setTaskLoading(false);
+    //     } catch (error) {
+    //         console.error('Error getting task:', error);
+    //     }
+    // }
+
+    // Handles task retrieval, will call tutor agent to get a response
     const getTask = async () => {
-        // Fetching task, task loading true
         setTaskLoading(true);
         try {
-            const task = await tutorAgent.getTask();
-            const taskObj = {description: task.content, id: task.id}
-            setTask(taskObj);
-            // Task fetched and set, task loading false
-            setTaskLoading(false);
+            const tasks = await tutorAgent.getTask(topic ? topic.id : null);
+            // If tasks are fetched, set the tasks, set the current task index to 0, and set the current task
+            if (tasks && tasks.length > 0) {
+                setTasks(tasks);
+                setCurrentTaskIndex(0);
+                setTask({ description: tasks[0].content, id: tasks[0].id, score: tasks[0].score, code: tasks[0].code });
+
+                // If the topic has changed, update the topic
+                if (!topic || (topic.id !== tasks[0].topic_id && tasks[0].topic)) {
+                    setTopic({ description: tasks[0].topic, id: tasks[0].topic_id });
+                }
+
+                // Set feedback to defaults
+                setIsCorrect(null);
+                setCodeFeedback(null);
+                setHint(null);
+                setOutput(null);
+
+            } else {
+                console.error('No tasks fetched.');
+            }
         } catch (error) {
             console.error('Error getting task:', error);
+        } finally {
+            setTaskLoading(false);
         }
-    }
+    };
+
+    // Cycles through tasks, will call tutor agent to get a response
+    const cycleTask = () => {
+        setCurrentTaskIndex(prevIndex => {
+            const incompleteTasks = tasks.filter(task => !completedTasks.includes(task.id));
+            // If there are no incomplete tasks, log that all tasks are completed and return the previous index
+            if (incompleteTasks.length === 0) {
+                console.log('All tasks completed.');
+                return prevIndex;
+            }
+            // Get the next incomplete task
+            const newIndex = (prevIndex + 1) % incompleteTasks.length;
+            const taskObj = { 
+                description: incompleteTasks[newIndex].content, 
+                id: incompleteTasks[newIndex].id, 
+                score: incompleteTasks[newIndex].score, 
+                code: incompleteTasks[newIndex].code }
+            console.log('Cycling task:', taskObj);
+
+            // Set feedback to defaults
+            setIsCorrect(null);
+            setCodeFeedback(null);
+            setHint(null);
+            setOutput(null);
+
+            setTask(taskObj);
+
+            
+            // If the topic has changed, update the topic
+            return newIndex;
+        });
+    };
 
     // Handle's changes in user input (code tool and chat tool) and updates the ref
     const handleEditorChange = (value, event) => {
+        //console.log('Code changed:', value)
         codeValueRef.current = value
     }
     const handlePromptChange = (event) => {
@@ -141,25 +269,51 @@ const Practice = () => {
         const { scrollHeight } = textarea
         textarea.style.height = `${scrollHeight}px`
     }
+    // Handles topic selection
+    const handleTopicSelection = (event) => {
+        setTopic({description: event.target.innerHTML, id: event.target.id});
+    }
 
     return (
         <div className='practice-page'>
-            <ChatTool
-                handlePromptChange={handlePromptChange}
-                handleSubmit={handlePromptSubmit}
-                chats={chatHistory}
-                chatLoading={chatHistoryLoading} />
-            <CodeTool 
-                handleEditorChange={handleEditorChange} 
-                handleSubmit={handleCodeSubmit} />
-            <Output 
-                output={output} 
-                task={task.description} 
-                getTask={getTask}
-                loading={taskLoading}
-                feedback={codeFeedback}
-                hint={hint}
-                isCorrect={isCorrect} />
+            <Sidebar 
+                topics={topicList}
+                onTopicClick={handleTopicSelection}
+                level={userInfo ? userInfo.level : null} />
+            {pageLoading ? (
+                <div className='loader-div'>
+                    <ClipLoader
+                    color='#088be2'
+                    loading={pageLoading}
+                    size={80}/>
+                </div>
+            ) : (
+                <div className='testclass'>
+                    <ChatTool
+                        handlePromptChange={handlePromptChange}
+                        handleSubmit={handlePromptSubmit}
+                        chats={chatHistory}
+                        chatLoading={chatHistoryLoading}
+                        topic={topic ? topic.description : null} />
+                    <CodeTool 
+                        handleEditorChange={handleEditorChange} 
+                        handleSubmit={handleCodeSubmit}
+                        hint={hint}
+                        isCorrect={isCorrect}
+                        code={task ? task.code : null}
+                        handleSave={handleSave} />
+                    <Output 
+                        output={output ? output : 'Code output displayed here'} 
+                        task={task ? task.description : null} 
+                        getTask={getTask}
+                        cycleTask={cycleTask}
+                        loading={taskLoading}
+                        feedback={codeFeedback}
+                        hint={hint}
+                        isCorrect={isCorrect}
+                        score={task ? task.score : null} />
+                </div>
+            )}
         </div>
     );
 }

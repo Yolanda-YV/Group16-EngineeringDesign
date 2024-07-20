@@ -50,7 +50,7 @@ const TaskCards = ({id, isOpen}) => {
                         </div>
                         <div className='task-card-info-2'>
                             <p>{task.status}</p>
-                            <p>{task.score}%</p>
+                            <p>{task.score ? `${task.score}%` : 'N/A'}</p>
                         </div>
                     </div>
                     <div className='task-card-feedback'>
