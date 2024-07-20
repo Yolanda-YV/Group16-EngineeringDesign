@@ -23,7 +23,7 @@ export default async (event, context) => {
             {role: "system", content: "You are a tutor that teaches Python programming."}, 
             ...dataObj.history,
             {role: "user", content: `${dataObj.prompt}`}],
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
     });
     return new Response(completion.choices[0].message.content, {status: 200,  statusText: "OK"});
 }
