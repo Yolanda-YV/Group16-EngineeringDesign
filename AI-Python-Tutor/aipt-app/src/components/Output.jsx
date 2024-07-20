@@ -18,7 +18,7 @@ const Output = ({output, task, cycleTask, loading, feedback, isCorrect, score}) 
       // Delay setting the loader to false
       const timer = setTimeout(() => {
         setOutputLoading(false);
-        console.log('Setting outputLoading to false after delay');
+        // console.log('Setting outputLoading to false after delay');
       }, 300); // Adjust the delay as needed (in milliseconds)
   
       return () => clearTimeout(timer);
