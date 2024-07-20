@@ -1,6 +1,8 @@
 import '../index.css';
 import React from 'react';
 import logo_primary from '/src/assets/Logo_primary.png';
+import { Link } from 'react-router-dom';
+import SignUp from './SignUp';
 
 const Landing = () => {
   return (
@@ -19,7 +21,9 @@ const Landing = () => {
           <p className="text-gray-600 mb-6 text-xl">
             Your AI-powered Python tutor, here to guide you through every step of your coding journey.
           </p>
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-full text-lg">Get Started Now</button>
+          <Link to="/signup">
+            <button className="bg-blue-600 text-white px-6 py-3 rounded-full text-lg">Get Started Now</button>
+          </Link>
         </div>
       </section>
 
@@ -35,27 +39,27 @@ const Landing = () => {
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8 my-5">
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Personalized Learning Experiences🌀</h3>
-            <p className="text-gray-600">Utilizes Large Language Models (LLMs) to tailor lessons to individual users.</p>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Personalized Learning 🍫</h3>
+            <p className="text-gray-600">Utilizes Large Language Models (LLMs) (GPT 3.5/GPT-4o-mini) to tailor lessons to individual users.</p>
           </div>
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">User-Friendly Interface🟢</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">User-Friendly Interface 🟢</h3>
             <p className="text-gray-600">Accessible to individuals with no prior programming experience and uses a dark theme that is better for the eyes.</p>
           </div>
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">AI Tutor Support🤖</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">AI Tutor Support 🤖</h3>
             <p className="text-gray-600">Allows users to learn at their own pace with guidance from an AI tutor through PyMon’s tutor chat system.</p>
           </div>
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Real-Time Feedback⚙️</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Real-Time Feedback ⚙️</h3>
             <p className="text-gray-600">Provides immediate feedback on code execution through code validation.</p>
           </div>
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Practice and Improvement💪</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Practice and Improvement 💪</h3>
             <p className="text-gray-600">Practice coding and receive instant suggestions for improvement.</p>
           </div>
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Progress Tracking📊</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Progress Tracking 📊</h3>
             <p className="text-gray-600">Monitors user interactions and task completions, generating insightful progress reports.</p>
           </div>
         </section>
@@ -67,7 +71,7 @@ const Landing = () => {
           <div className="relative pb-9/16">
             <iframe
               className="absolute top-0 left-0 w-full h-full"
-              src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+              src="https://www.youtube.com/embed/-DiWnlg03VU"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -79,7 +83,9 @@ const Landing = () => {
         <section className="text-center my-10">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Get Started</h2>
           <p className="text-gray-600 mb-4">Join us today and start enjoying the learning!</p>
+          <Link to="/signup">         
           <button className="bg-blue-600 text-white px-6 py-2 rounded-full">Sign Up Now</button>
+          </Link>
         </section>
 
         <section className="text-center py-10">
