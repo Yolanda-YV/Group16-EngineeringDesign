@@ -1,3 +1,4 @@
+
 /* || GENERAL STYLING*/
 .submit-btn {
     background-color: var(--color-primary-2);
@@ -21,6 +22,22 @@
 }
 .submit-btn:hover {
     background-color: var(--color-primary-1);
+}
+.clear-chat-btn {
+    background-color: red;
+    border-radius: 0.25rem;
+    font-weight: bolder;
+    font-size: 1.5rem;
+    color: #EEEEEE;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 .redirect-div {
     display: flex;
@@ -519,9 +536,6 @@
     padding: 1rem;
     margin: -1rem -1rem 0.5rem -1rem;
 }
-
-
-
 .topics-card,
 .tasks-card {
     flex: 1; /* Grow to fill available space */
@@ -549,4 +563,45 @@
     padding: 1rem;
     width: 51.5rem;
     margin: 1rem;
+}
+
+/*Landing Page*/
+.landing-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#first-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+.landing-page img {
+    margin: 1rem;
+}
+.primary-color {
+    background-color: var(--color-primary-1);
+}
+.surface-color {
+    background-color: var(--color-surface-1);
+}
+.landing-page button {
+    background-color: var(--color-primary-2);
+    padding: 1rem;
+    border: none;
+    width: 10rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.landing-page button:hover {
+    background-color: var(--color-primary-1);
+}
+.video-div {
+    background-color: aqua;
+    height: 35rem;
+}
+.video-div iframe {
+    width: 100%;
+    height: 100%;
 }

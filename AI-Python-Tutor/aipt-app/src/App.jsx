@@ -9,6 +9,7 @@ import Practice from './pages/Practice'
 import Dashboard from './pages/Dashboard'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
+import Landing from './pages/Landing'
 import supabase from './utilities/Supabase.js'
 
 function App() {
@@ -38,13 +39,14 @@ function App() {
     )
   } else {
     // User is not signed in
-    // Signin page is root, and only other page accessible is signup
+    // Landing page is root, and only other page accessible is signup
     // Logout button not shown in navbar
     return (
       <div>
         <Navbar signedIn={false} />
         <Routes>
-          <Route path="/" element={<SignIn />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>

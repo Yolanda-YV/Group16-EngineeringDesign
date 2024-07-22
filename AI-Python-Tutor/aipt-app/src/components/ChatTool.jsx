@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { PulseLoader, ClipLoader } from 'react-spinners';
 import Send from './svg/Send.jsx';
 
-const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading, topic}) => {
+const ChatTool = ({handleSubmit, handlePromptChange, handleClearChat, chats, chatLoading, topic}) => {
     const [responseLoading, setResponseLoading] = useState(false)
     const chatSpace = useRef(null);
     useEffect(() => {
@@ -52,6 +52,7 @@ const ChatTool = ({handleSubmit, handlePromptChange, chats, chatLoading, topic})
                     placeholder='Type your message here' 
                     onChange={handlePromptChange}></textarea>
                 <button type='submit' className='submit-btn'><Send color={'#EEEEEE'} />Send</button>
+                <button type='button' onClick={handleClearChat} className='clear-chat-btn'>Clear Chat</button>
             </form>
         </div>
     );
