@@ -36,7 +36,7 @@ const Navbar = ({signedIn}) => {
                         <Link to="/practice" className="nav-item">Practice</Link>
                     </li>
                     <li>
-                        <Link to="/dashboard" className="nav-item">Dashboard</Link>
+                        <Link to="/" className="nav-item">Dashboard</Link>
                     </li>
                     <li>
                         <Link onClick={onLogout} className="nav-item">Log Out</Link>
