@@ -6,8 +6,8 @@ import SignUp from './SignUp';
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-blue-600 p-4">
+    <div className="min-h-screen bg-gray-100 landing-page">
+      <header className="bg-blue-600 p-4 primary-color">
         <div className="container mx-auto text-white">
           <h1 className="text-3xl font-bold text-center">Welcome to PyMon!</h1>
         </div>
@@ -15,7 +15,7 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="bg-gray-200 py-20 text-center">
-        <div className="container mx-auto">
+        <div id="first-section" className="container mx-auto">
           <img src={logo_primary} alt="PyMon Logo" className="mx-auto mb-6" style={{ maxWidth: '300px', height: 'auto' }} />
           <h1 className="text-5xl font-bold text-gray-800 mb-4">Master Python with PyMon</h1>
           <p className="text-gray-600 mb-6 text-xl">
@@ -68,7 +68,7 @@ const Landing = () => {
         <section className="text-center py-10">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Watch Our Demo</h2>
           <p className="text-gray-600 mb-4">See PyMon in action and understand how it can help you learn Python effectively.</p>
-          <div className="relative pb-9/16">
+          <div className="relative pb-9/16 video-div">
             <iframe
               className="absolute top-0 left-0 w-full h-full"
               src="https://www.youtube.com/embed/-DiWnlg03VU"
