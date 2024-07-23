@@ -118,7 +118,7 @@ const Landing = () => {
         </section>
       </main>
 
-      <footer className="bg-blue-600 p-4">
+      <footer className="bg-blue-600 p-4  primary-color">
         <div className="container mx-auto text-white text-center">
           <p>&copy; 2024 PyMon. All rights reserved.</p>
         </div>
