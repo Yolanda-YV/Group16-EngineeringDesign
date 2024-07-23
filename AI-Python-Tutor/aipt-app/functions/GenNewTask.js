@@ -32,7 +32,7 @@ export default async (event, context) => {
             {role: "system", content: "These exercises will not tell the user to generate or create an excercise or task, they will tell the user to create a program or code that does something."},
             ...exampleTasks,
             {role: "system", content: `Topic Name: ${dataObj.current_topic}`}],
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
     });
     return new Response(completion.choices[0].message.content, {status: 200,  statusText: "OK"});
 }

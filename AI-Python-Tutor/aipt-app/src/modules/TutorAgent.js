@@ -1,5 +1,4 @@
 import supabase from '../utilities/Supabase.js';
-
 import { Interpreter } from './Interpreter.js';
 import { ValidatorAgent } from './ValidatorAgent.js';
 
