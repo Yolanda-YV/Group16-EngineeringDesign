@@ -51,16 +51,16 @@ class TutorAgent {
             // COMMENTING THIS FOR TESTING PURPOSES, NO SAVING TO DB UNTIL VALIDATOR RESPONSE CAN BE USED
             // Checking if this is an in-progress task or not
             const { data:{user} } = await supabase.auth.getUser(); // Getting user
-
+            console.log(validation.feedback)
             // If task exists, update the score, otherwise don't
             if (task.id) {
                 // Testing DB function update_score()
-                const { data, error } = await supabase.rpc("update_score", {
-                    u_id: user.id,
-                    t_id: task.id,
+                const { data, error } = await supabase.rpc("update_score", { 
                     is_correct: validation.isCorrect,
-                    val_response: validation.feedback,
+                    t_id: task.id,
+                    u_id: user.id,
                     user_code: code,
+                    val_response: validation.feedback,
                 });
                 if (error) {
                     console.error('Error updating score:', error);
