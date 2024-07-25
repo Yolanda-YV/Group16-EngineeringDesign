@@ -1,8 +1,5 @@
 import OpenAI from "openai";
-
 const openai = new OpenAI({apiKey: process.env.VITE_OPENAI_API_KEY});
-
-// Will use embeddings for relevant chat search as context
 
 // Main function to handle the response
 export default async (event, context) => {

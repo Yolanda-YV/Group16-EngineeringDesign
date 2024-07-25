@@ -15,7 +15,8 @@ const Sidebar = ({topics, onTopicClick, level}) => {
             const topics_3 = topics.filter(topic => topic.level_id == 3);
             setTopics({beginner: topics_1, intermediate: topics_2, expert: topics_3});
         }
-    }, [topics]);
+        console.log(level)
+    }, [topics, level]);
 
     const handleTopicClick = (e) => {
         onTopicClick(e);
@@ -37,9 +38,9 @@ const Sidebar = ({topics, onTopicClick, level}) => {
                     <dt>Intermediate {level == "Beginner" ? <Lock /> : null}</dt>
                     {Topics.intermediate.map((topic, index) => (
                         <dd 
-                            className={level == "Beginner" || level == "Intermediate" ? 'inactive' : ''} 
+                            className={level == "Beginner" ? 'inactive' : ''} 
                             key={index} id={topic.id} 
-                            onClick={level == "Beginner" || level == "Intermediate" ? null : handleTopicClick}>{topic.name}</dd>
+                            onClick={level == "Beginner" ? null : handleTopicClick}>{topic.name}</dd>
                     ))}
                     <dt>Expert {level == "Beginner" || level == "Intermediate" ? <Lock /> : null}</dt>
                     {Topics.expert.map((topic, index) => (
