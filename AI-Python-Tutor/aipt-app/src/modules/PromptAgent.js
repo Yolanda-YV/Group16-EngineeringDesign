@@ -73,8 +73,8 @@ class PromptAgent {
             // Reconstruct the code with the original indentation preserved
             let formattedCode = nonEmptyLines.join('\n');
     
-            // Remove extra spaces around operators
-            formattedCode = formattedCode.replace(/\s*([+\-/*=])\s*/g, ' $1 ');
+            // Remove extra spaces around single-character operators, preserving '=='
+        formattedCode = formattedCode.replace(/\s*([+\-/*=](?!=))\s*/g, ' $1 ');
     
             return formattedCode;
         } catch (error) {
