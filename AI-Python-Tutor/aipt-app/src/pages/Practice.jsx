@@ -81,18 +81,18 @@ const Practice = () => {
             // Get the code from the ref
             const code = codeValueRef.current;
 
-            console.log('code:', code);
+            // console.log('code:', code);
     
-            // Format the code using the PromptAgent's formatCode method
-            const formattedCode = await promptAgent.formatCode(code);
+            // // Format the code using the PromptAgent's formatCode method
+            // const formattedCode = await promptAgent.formatCode(code);
 
-            console.log('formattedCode:', formattedCode);
+            // console.log('formattedCode:', formattedCode);
     
             // Send the formatted code to the tutor agent for further processing
             // NOTE: This is where the request to the Tutor Agent is made
             //       Tutor Agent will call the Validator Agent to validate and interpret the code (using the interpreter)
             //        Validator Agent will return the validator's feedback and the interpreter's feedback
-            const response = await tutorAgent.submitCode(formattedCode, task);
+            const response = await tutorAgent.submitCode(code, task);
 
             setOutput(response.output);
             setCodeFeedback(response.feedback);
