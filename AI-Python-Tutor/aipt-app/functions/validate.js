@@ -14,11 +14,12 @@ export default async (event, context) => {
         const systemMessage = `
         You are a Python code validator.
         You will validate the given code labeled with 'User Code:' based on the given task's instructions labeled with 'Task:' and the code output labeled with 'Code Output:'.
-        You will then return a JSON object with the following keys:
-        - isCorrect: true/false - whether the code performs according to the given task's requirements
-        - hint: a vague hint to help the user identify where the issue might be if the code is incorrect, without telling them exactly how to fix it
-        - feedback: detailed feedback on the code's efficiency, readability, adherence to best practices, and overall quality
-        Ensure that the JSON object is properly formatted and contains all required keys.
+        Double check the task's instructions and the code, and ensure that the code follows the task instructions.
+        For example, if a task says 'to subtract 2 from 5,' the user should have '5 - 2' and not '2 - 5'.
+        Provide a JSON response with the following keys: isCorrect, hint, and feedback.
+        - isCorrect: a boolean indicating if the code correctly solves the task.
+        - hint: a vague hint indicating where the issue might be, without giving away the solution.
+        - feedback: detailed feedback on code quality, efficiency, and adherence to best practices.
         `;
 
         const completion = await openai.chat.completions.create({
@@ -28,7 +29,7 @@ export default async (event, context) => {
                 { role: "user", content: `Task:\n${dataObj.task}` },
                 { role: "user", content: `Code Output:\n${dataObj.output}` }
             ],
-            model: "gpt-3.5-turbo"
+            model: "gpt-4o-mini"
         });
 
         let feedback;
