@@ -30,7 +30,6 @@ const CodeTool = ({handleEditorChange, handleSubmit, handleSave, hint, isCorrect
     const closeHint = () => {
         setShowHint(false);
     };
-    console.log(code);
     return (
         <form className='code-tool' onSubmit={handleSubmit}>
             <Editor 

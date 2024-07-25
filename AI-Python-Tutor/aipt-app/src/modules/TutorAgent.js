@@ -44,14 +44,14 @@ class TutorAgent {
 
             await this.interpreter.initPyodide();
             const output = await this.interpreter.runPython(code); // When merging changes, this will instead be a tutor agent method that calls this via the validator
-            console.log(output) // Testing output format --- Like code from AI tutor, this needs to be formatted too
+            //console.log(output) // Testing output format --- Like code from AI tutor, this needs to be formatted too
             
             const validation = await this.validator.validateCode(code, task.description, output); // TEST VALIDATOR
 
             // COMMENTING THIS FOR TESTING PURPOSES, NO SAVING TO DB UNTIL VALIDATOR RESPONSE CAN BE USED
             // Checking if this is an in-progress task or not
             const { data:{user} } = await supabase.auth.getUser(); // Getting user
-            console.log(validation.feedback)
+            //console.log(validation.feedback)
             // If task exists, update the score, otherwise don't
             if (task.id) {
                 // Testing DB function update_score()
@@ -75,7 +75,7 @@ class TutorAgent {
                 feedback: validation.feedback, 
                 hint: validation.hint, 
                 isCorrect: validation.isCorrect}
-            console.log(allData)
+            //console.log(allData)
             
             //return {output: output, feedback: feedback, hint: hint, isCorrect: isCorrect};
             return allData;
@@ -95,7 +95,7 @@ class TutorAgent {
                 const { error, data } = await supabase.rpc("get_task", {
                     u_id: user.id,
                     selected_topic: topicID});
-                console.log(data);
+                //console.log(data);
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
@@ -110,7 +110,7 @@ class TutorAgent {
                 // No specific topic selected
                 const { error, data } = await supabase.rpc("get_task", {
                     u_id: user.id});
-                console.log(data);
+                //console.log(data);
                 if (error) {
                     throw error
                 } else if (data.length > 0) {
