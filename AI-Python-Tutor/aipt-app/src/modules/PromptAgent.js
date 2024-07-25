@@ -100,6 +100,7 @@ class PromptAgent {
             feedback = feedback.replace(/`{3}(.*?)`{3}/g, '<code>$1</code>');
             feedback = feedback.replace(/(?=)(python)/g, '<div>$1</div>'); // To modify the python header
             feedback = feedback.replace(/`{1}(.*?)`{1}/g, '<code>$1</code>');
+            feedback = feedback.replace(/#{3}(.*?)<br>/g, '<h3>$1</h3>'); // To modify headers
 
             return feedback;
         } catch (error) {
