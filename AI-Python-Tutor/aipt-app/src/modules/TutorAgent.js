@@ -12,17 +12,23 @@ class TutorAgent {
         // This function will call the Response serverless function to get a response from OPENAI
 
         const relChat = await this.getRelevantChat(prompt);
+        let completion = null;
+        let retry = 3;
 
         // Putting chat history and new prompt together
         const data = {history: relChat, prompt: prompt}
 
-        // Make a request to the Response serverless function
-        const response = await fetch("/.netlify/functions/Response", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
-        const completion = await response.text();
+        do {
+            retry -= 1;
+            console.log("Making a request...")
+            // Make a request to the Response serverless function
+            const response = await fetch("/.netlify/functions/Response", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            completion = await response.text();
+        } while (completion.includes('TimeoutError') && retry > 0);
 
         //Save chat history
         if (completion) {

@@ -15,7 +15,6 @@ const Sidebar = ({topics, onTopicClick, level}) => {
             const topics_3 = topics.filter(topic => topic.level_id == 3);
             setTopics({beginner: topics_1, intermediate: topics_2, expert: topics_3});
         }
-        console.log(level)
     }, [topics, level]);
 
     const handleTopicClick = (e) => {
